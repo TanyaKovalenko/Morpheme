@@ -38,36 +38,88 @@ def form_morphemes_lists():
                                                 ending = morpheme.split(',')
                                                 ending_list += ending
 	# Записываем все префиксы, корни, суффиксы и окончания в соответствующие файлы 
+	# prefixies
 	for inx in range(len(prefixies_list) - 1):
 		prefixies_list[inx] = prefixies_list[inx].strip()
 		if prefixies_list[inx].find(':') != -1:
-			print prefixies_list[inx] 
+			with codecs.open('BAD_prefixies.txt', 'a', encoding='utf-8') as f:
+                		f.write(prefixies_list[inx] + '\n')
 	with codecs.open('prefixies.txt', 'a', encoding='utf-8') as f:
                 f.write('\n'.join(set(prefixies_list)))
-
+	
+	# roots
         for inx in range(len(roots_list) - 1):
                 roots_list[inx] = roots_list[inx].strip()
+		if roots_list[inx].find(':') != -1 or \
+                        roots_list[inx].find('{') != -1 or \
+                        roots_list[inx].find('}') != -1 or \
+                        roots_list[inx].find('(') != -1 or \
+                        roots_list[inx].find(')') != -1 or \
+                        roots_list[inx].find('[') != -1 or \
+                        roots_list[inx].find(']') != -1:
+			with codecs.open('BAD_roots.txt', 'a', encoding='utf-8') as f:
+                                f.write(roots_list[inx] + '\n')
 	with codecs.open('roots.txt', 'a', encoding='utf-8') as f:
         	f.write('\n'.join(set(roots_list)))
-
+	
+	#suffixies
 	for inx in range(len(suffixies_list) - 1):
                 suffixies_list[inx] = suffixies_list[inx].strip()
+		if suffixies_list[inx].find(':') != -1 or \
+			suffixies_list[inx].find('{') != -1 or \
+			suffixies_list[inx].find('}') != -1 or \
+			suffixies_list[inx].find('(') != -1 or \
+			suffixies_list[inx].find(')') != -1 or \
+			suffixies_list[inx].find('[') != -1 or \
+			suffixies_list[inx].find(']') != -1: 
+                        with codecs.open('BAD_suffixies.txt', 'a', encoding='utf-8') as f:
+                                f.write(suffixies_list[inx] + '\n')
         with codecs.open('suffixies.txt', 'a', encoding='utf-8') as f:
                 f.write('\n'.join(set(suffixies_list)))
-
+	
+	#endings
 	for inx in range(len(ending_list) - 1):
                 ending_list[inx] = ending_list[inx].strip()
+		if ending_list[inx].find(':') != -1 or \
+                        ending_list[inx].find('{') != -1 or \
+                        ending_list[inx].find('}') != -1 or \
+                        ending_list[inx].find('(') != -1 or \
+                        ending_list[inx].find(')') != -1 or \
+                        ending_list[inx].find('[') != -1 or \
+                        ending_list[inx].find(']') != -1:
+                        with codecs.open('BAD_ending.txt', 'a', encoding='utf-8') as f:
+                                f.write(ending_list[inx] + '\n')
         with codecs.open('ending.txt', 'a', encoding='utf-8') as f:
                 f.write('\n'.join(set(ending_list)))
 
+	#main_part
 	for inx in range(len(main_part_list) - 1):
                 main_part_list[inx] = main_part_list[inx].strip()
+		if main_part_list[inx].find(':') != -1 or \
+                        main_part_list[inx].find('{') != -1 or \
+                        main_part_list[inx].find('}') != -1 or \
+                        main_part_list[inx].find('(') != -1 or \
+                        main_part_list[inx].find(')') != -1 or \
+                        main_part_list[inx].find('[') != -1 or \
+                        main_part_list[inx].find(']') != -1:
+                        with codecs.open('BAD_main_part.txt', 'a', encoding='utf-8') as f:
+                                f.write(main_part_list[inx] + '\n')
         with codecs.open('main_part.txt', 'a', encoding='utf-8') as f:
                 f.write('\n'.join(set(main_part_list)))
 
+	#connecting_vowel
 	for inx in range(len(connecting_vowel_list) - 1):
                 connecting_vowel_list[inx] = connecting_vowel_list[inx].strip()
-        with codecs.open('connecting_vowel.txt', 'a', encoding='utf-8') as f:
+                if connecting_vowel_list[inx].find(':') != -1 or \
+                        connecting_vowel_list[inx].find('{') != -1 or \
+                        connecting_vowel_list[inx].find('}') != -1 or \
+                        connecting_vowel_list[inx].find('(') != -1 or \
+                        connecting_vowel_list[inx].find(')') != -1 or \
+                        connecting_vowel_list[inx].find('[') != -1 or \
+                        connecting_vowel_list[inx].find(']') != -1:        
+			with codecs.open('BAD_connecting_vowel.txt', 'a', encoding='utf-8') as f:
+                                f.write(connecting_vowel_list[inx] + '\n')
+	with codecs.open('connecting_vowel.txt', 'a', encoding='utf-8') as f:
                 f.write('\n'.join(set(connecting_vowel_list)))
 
 if __name__ == "__main__":
