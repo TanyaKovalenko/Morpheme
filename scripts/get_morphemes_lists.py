@@ -16,9 +16,9 @@ def form_morphemes_lists():
 			line = line[start_inx:len(line)]
 			morphemes = line.split(';')
                         for item in morphemes:
-                                morpheme = item.split(u'—')[0].strip()
-                                if (len(item.split(u'—')) > 1):
-                                        morpheme_name = item.split(u'—')[1].strip()
+                                morpheme = item.split(u'-')[0].strip()
+                                if (len(item.split(u'-')) > 1):
+                                        morpheme_name = item.split(u'-')[1].strip()
                                         if (morpheme_name == u'корень') or (morpheme_name == u'корни'):
                                                 roots = morpheme.split(',')
 						roots_list += roots
@@ -31,10 +31,10 @@ def form_morphemes_lists():
                                         if (morpheme_name == u'основа слова'):
                                                 main_part = morpheme.split(',')
                                                 main_part_list += main_part
-                                        if (morpheme_name == u'соединительная гласная'):
+                                        if (morpheme_name == u'соединительная гласная') or (morpheme_name == u'соединительные гласные'):
                                                 connecting_vowel = morpheme.split(',')
                                                 connecting_vowel_list += connecting_vowel
-                                        if (morpheme_name == u'окончание'):
+                                        if (morpheme_name == u'окончание') or (morpheme_name == u'окончания'):
                                                 ending = morpheme.split(',')
                                                 ending_list += ending
 	# Записываем все префиксы, корни, суффиксы и окончания в соответствующие файлы 
@@ -42,9 +42,9 @@ def form_morphemes_lists():
 	for inx in range(len(prefixies_list) - 1):
 		prefixies_list[inx] = prefixies_list[inx].strip()
 		if prefixies_list[inx].find(':') != -1:
-			with codecs.open('BAD_prefixies.txt', 'a', encoding='utf-8') as f:
+			with codecs.open('../dicts/bad_morphemes_lists/BAD_prefixies.txt', 'w', encoding='utf-8') as f:
                 		f.write(prefixies_list[inx] + '\n')
-	with codecs.open('prefixies.txt', 'a', encoding='utf-8') as f:
+	with codecs.open('../dicts/morphemes_lists/prefixies.txt', 'w', encoding='utf-8') as f:
                 f.write('\n'.join(set(prefixies_list)))
 	
 	# roots
@@ -57,9 +57,9 @@ def form_morphemes_lists():
                         roots_list[inx].find(')') != -1 or \
                         roots_list[inx].find('[') != -1 or \
                         roots_list[inx].find(']') != -1:
-			with codecs.open('BAD_roots.txt', 'a', encoding='utf-8') as f:
+			with codecs.open('../dicts/bad_morphemes_lists/BAD_roots.txt', 'w', encoding='utf-8') as f:
                                 f.write(roots_list[inx] + '\n')
-	with codecs.open('roots.txt', 'a', encoding='utf-8') as f:
+	with codecs.open('../dicts/morphemes_lists/roots.txt', 'w', encoding='utf-8') as f:
         	f.write('\n'.join(set(roots_list)))
 	
 	#suffixies
@@ -72,9 +72,9 @@ def form_morphemes_lists():
 			suffixies_list[inx].find(')') != -1 or \
 			suffixies_list[inx].find('[') != -1 or \
 			suffixies_list[inx].find(']') != -1: 
-                        with codecs.open('BAD_suffixies.txt', 'a', encoding='utf-8') as f:
+                        with codecs.open('../dicts/bad_morphemes_lists/BAD_suffixies.txt', 'w', encoding='utf-8') as f:
                                 f.write(suffixies_list[inx] + '\n')
-        with codecs.open('suffixies.txt', 'a', encoding='utf-8') as f:
+        with codecs.open('../dicts/morphemes_lists/suffixies.txt', 'w', encoding='utf-8') as f:
                 f.write('\n'.join(set(suffixies_list)))
 	
 	#endings
@@ -87,9 +87,9 @@ def form_morphemes_lists():
                         ending_list[inx].find(')') != -1 or \
                         ending_list[inx].find('[') != -1 or \
                         ending_list[inx].find(']') != -1:
-                        with codecs.open('BAD_ending.txt', 'a', encoding='utf-8') as f:
+                        with codecs.open('../dicts/bad_morphemes_lists/BAD_ending.txt', 'w', encoding='utf-8') as f:
                                 f.write(ending_list[inx] + '\n')
-        with codecs.open('ending.txt', 'a', encoding='utf-8') as f:
+        with codecs.open('../dicts/morphemes_lists/ending.txt', 'w', encoding='utf-8') as f:
                 f.write('\n'.join(set(ending_list)))
 
 	#main_part
@@ -102,9 +102,9 @@ def form_morphemes_lists():
                         main_part_list[inx].find(')') != -1 or \
                         main_part_list[inx].find('[') != -1 or \
                         main_part_list[inx].find(']') != -1:
-                        with codecs.open('BAD_main_part.txt', 'a', encoding='utf-8') as f:
+                        with codecs.open('../dicts/bad_morphemes_lists/BAD_main_part.txt', 'w', encoding='utf-8') as f:
                                 f.write(main_part_list[inx] + '\n')
-        with codecs.open('main_part.txt', 'a', encoding='utf-8') as f:
+        with codecs.open('../dicts/morphemes_lists/main_part.txt', 'w', encoding='utf-8') as f:
                 f.write('\n'.join(set(main_part_list)))
 
 	#connecting_vowel
@@ -117,9 +117,9 @@ def form_morphemes_lists():
                         connecting_vowel_list[inx].find(')') != -1 or \
                         connecting_vowel_list[inx].find('[') != -1 or \
                         connecting_vowel_list[inx].find(']') != -1:        
-			with codecs.open('BAD_connecting_vowel.txt', 'a', encoding='utf-8') as f:
+			with codecs.open('../dicts/bad_morphemes_lists/BAD_connecting_vowel.txt', 'w', encoding='utf-8') as f:
                                 f.write(connecting_vowel_list[inx] + '\n')
-	with codecs.open('connecting_vowel.txt', 'a', encoding='utf-8') as f:
+	with codecs.open('../dicts/morphemes_lists/connecting_vowel.txt', 'w', encoding='utf-8') as f:
                 f.write('\n'.join(set(connecting_vowel_list)))
 
 if __name__ == "__main__":
