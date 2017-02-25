@@ -127,14 +127,55 @@ class parser(object):
     # def
 
     @classmethod
-    def specify_file_(cls, path_to_dict):
-        cls._PATH_TO_SUFFIXIES = path_to_dict
+    def len(cls):
+        return len(cls._MORPHEMES_)
+    # def
+
+    @classmethod
+    def keys(cls):
+        return cls._MORPHEMES_.keys()
+    # def
+
+    @classmethod
+    def specify_file(cls, path_to_dict):
+        cls._PATH_TO_MORPHEMES = path_to_dict
+        cls.__load()
     # def
 # class
 
+def open_other_suffixes():
+    l = []
+
+    with codecs.open('../dicts/morphemes_lists/suffixies.txt', 'r', encoding='utf-8') as fin:
+        for line in fin:
+            if line.find('(') != -1 or \
+                line.find(')') != -1 or \
+                line.find('{') != -1 or \
+                line.find('}') != -1:
+                continue
+            # if
+
+            l.append(line.strip())
+        # for
+    # with
+
+    return l
+# def
+
 if __name__ == '__main__':
-    values = parser.get(u'об')
-    for m, e, s in values:
-        print e[0][0]
+    parser.specify_file("../dicts/suffixies.txt")
+    keys = parser.keys()
+    s1 = set(keys)
+
+    keys2 = open_other_suffixes()
+    s2 = set(keys2)
+
+    dif = s2 - s1
+    xor = s2.intersection(s1)
+
+    print len(s2), len(s1), len(dif), len(xor)
+
+    for v in xor:
+        print v
     # for
 # if
