@@ -15,6 +15,14 @@ class Word_Morpheme:
 word_morhemes_dict = {}
 
 def form_dict():
+    actions = {u'корень': 'roots', u'корни': 'roots',
+               u'приставка': 'prefixies', u'приставки': 'prefixies',
+               u'суффикс': 'suffixies', u'суффиксы': 'suffixies',
+               u'основа слова': 'main_part', u'основы': 'main_part',
+               u'соединительная гласная': 'connecting_vowel',
+               u'соединительные гласные': 'connecting_vowel',
+               u'окончание': 'ending', u'окончания': 'ending'}
+
     with codecs.open(file_name, 'r', encoding='utf-8') as f:
         for line in f:
             word_morphems = Word_Morpheme()
@@ -23,28 +31,21 @@ def form_dict():
             line = line[start_inx:len(line)]
             morphemes = line.split(';')
             for item in morphemes:
-                morpheme = item.split(u'—')[0].strip()
-                if (len(item.split(u'—')) > 1):
-                    morpheme_name = item.split(u'—')[1].strip()
-                    if (morpheme_name == u'корень') or (morpheme_name == u'корни'):
-                        roots = morpheme.split(',')
-                        word_morphems.roots = roots
-                    if (morpheme_name == u'приставка') or (morpheme_name == u'приставки'):
-                        prefixies = morpheme.split(',')
-                        word_morphems.prefixies = prefixies
-                    if (morpheme_name == u'суффикс') or (morpheme_name == u'суффиксы'):
-                        suffixies = morpheme.split(',')
-                        word_morphems.suffixies = suffixies
-                    if (morpheme_name == u'основа слова'):
-                        main_part = morpheme.split(',')
-                        word_morphems.main_part = main_part
-                    if (morpheme_name == u'соединительная гласная'):
-                        connecting_vowel = morpheme.split(',')
-                        word_morphems.connecting_vowel = connecting_vowel
-                    if (morpheme_name == u'окончание'):
-                        ending = morpheme.split(',')
-                        word_morphems.ending = ending
+                pos = item.rfind('-', 0)
+
+                if pos != -1:
+                    item = item.replace('.', '')
+                    morpheme = item[:pos - 1].strip()
+                    morpheme_name = item[pos + 1:].strip()
+
+                    setattr(word_morphems, actions[morpheme_name], morpheme.split(','))
+                # if
+            # for
+
             word_morhemes_dict[word] = word_morphems
+        # for
+    # with
+# def
 
 def getMorphemes(word):
     form_dict()
@@ -53,6 +54,9 @@ def getMorphemes(word):
 if __name__ == "__main__":
     form_dict()
 
+    print word_morhemes_dict[u'наибольший'].ending
+
+    """
     d = defaultdict(lambda: 0)
     d_words = defaultdict(list)
 
@@ -69,8 +73,9 @@ if __name__ == "__main__":
     for t in sorted(l):
         count, suf = t
 
-        if count <= 2:
+        if count <= 10:
             print suf, "(%s): " % (str(count)), ', '.join(d_words[suf])
         # if
     # for
+    """
 # if
