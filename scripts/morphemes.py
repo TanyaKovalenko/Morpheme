@@ -10,18 +10,19 @@ class Word_Morpheme:
     suffixies = list()
     main_part = list()
     connecting_vowel = list()
-    ending = list()
-
-word_morhemes_dict = {}
+    endings = list()
+# class
 
 def form_dict():
+    word_morhemes_dict = {}
+
     actions = {u'корень': 'roots', u'корни': 'roots',
                u'приставка': 'prefixies', u'приставки': 'prefixies',
                u'суффикс': 'suffixies', u'суффиксы': 'suffixies',
                u'основа слова': 'main_part', u'основы': 'main_part',
                u'соединительная гласная': 'connecting_vowel',
                u'соединительные гласные': 'connecting_vowel',
-               u'окончание': 'ending', u'окончания': 'ending'}
+               u'окончание': 'endings', u'окончания': 'endings'}
 
     with codecs.open(file_name, 'r', encoding='utf-8') as f:
         for line in f:
@@ -45,16 +46,18 @@ def form_dict():
             word_morhemes_dict[word] = word_morphems
         # for
     # with
+
+    return word_morhemes_dict
 # def
 
-def getMorphemes(word):
-    form_dict()
-    return word_morhemes_dict[word]
+#def getMorphemes(word):
+#    form_dict()
+#    return word_morhemes_dict[word]
 
 if __name__ == "__main__":
     form_dict()
 
-    print word_morhemes_dict[u'наибольший'].ending
+    #print word_morhemes_dict[u'наибольший'].ending
 
     """
     d = defaultdict(lambda: 0)

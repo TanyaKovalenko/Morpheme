@@ -1,5 +1,7 @@
 # coding=utf-8
 import codecs
+from morphemes import form_dict
+
 file_name = 'dicts//words_like_morhemes.txt'
 root_array = []
 pref_array = []
@@ -13,6 +15,8 @@ class Word_Morpheme:
         self.main_part = []
         self.connecting_vowel = []
         self.ending = []
+    # def
+# class
 
 def parse_file_to_array(file, array):
     with codecs.open(file, "r", encoding='utf-8') as dict_file:    
@@ -29,41 +33,6 @@ def parse_file_to_array(file, array):
                             array.append(main_element + end.strip().lower())
                     else:
                         array.append(element_slash.strip().lower())
-
-def form_dict():
-    word_morhemes_dict = {}
-    
-    with codecs.open(file_name, 'r', encoding='utf-8') as f:
-        for line in f:
-            word_morphems = Word_Morpheme()
-            word = line.split(':')[0]    
-            start_inx = line.find(': ') + len(': ')
-            line = line[start_inx:len(line)]
-            morphemes = line.split(';')
-            for item in morphemes:
-                morpheme = item.split(u'—')[0].strip()
-                if (len(item.split(u'—')) > 1):
-                    morpheme_name = item.split(u'—')[1].strip()
-                    if (morpheme_name == u'корень') or (morpheme_name == u'корни'):
-                        roots = morpheme.split(',')
-                        word_morphems.roots = roots
-                    if (morpheme_name == u'приставка') or (morpheme_name == u'приставки'):
-                        prefixies = morpheme.split(',')
-                        word_morphems.prefixies = prefixies
-                    if (morpheme_name == u'суффикс') or (morpheme_name == u'суффиксы'):
-                        suffixies = morpheme.split(',')
-                        word_morphems.suffixies = suffixies
-                    if (morpheme_name == u'основа слова'):
-                        main_part = morpheme.split(',')
-                        word_morphems.main_part = main_part
-                    if (morpheme_name == u'соединительная гласная'):
-                        connecting_vowel = morpheme.split(',')
-                        word_morphems.connecting_vowel = connecting_vowel
-                    if (morpheme_name == u'окончание'):
-                        ending = morpheme.split(',')
-                        word_morphems.ending = ending
-            word_morhemes_dict[word] = word_morphems
-    return word_morhemes_dict
 
 def parse_by_morphemes(elem):
     word_morphems = Word_Morpheme()
@@ -100,10 +69,13 @@ def parse_by_morphemes(elem):
 
 def getMorphemes(main_dict, word):
     dict_result = main_dict[word]
+
     if len(dict_result.roots) == 0:
        dict_result = parse_by_morphemes(word)
     #dict_result = parse_by_morphemes(word)
+
     return dict_result
+# def
 
 if __name__ == "__main__":
     parse_file_to_array("dicts//roots.txt", root_array)    
