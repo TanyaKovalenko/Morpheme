@@ -4,7 +4,7 @@ import csv
 import codecs
 
 urls_file_name = 'words.txt'
-morphemes_file_name = 'words_like_morhemes.txt'
+morphemes_file_name = 'words_like_morphemes.txt'
 
 class MorphySpider(scrapy.Spider):
 	name = "morpheme_spider"
@@ -47,7 +47,7 @@ class MorphySpider(scrapy.Spider):
                 	morpheme = morpheme.replace(', ;', ';')
 			morpheme = morpheme.replace('.;', ';')
 			morpheme = morpheme.replace('&amp;plus;', '+')
-		        with codecs.open('words_like_morhemes.txt', 'a', encoding='utf-8') as f:
+		        with codecs.open('words_like_morphemes.txt', 'a', encoding='utf-8') as f:
                         	f.write(morpheme + '\n')
                         
                 else:

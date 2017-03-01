@@ -19,8 +19,8 @@ class parser(object):
     def __load(cls):
         """
         Loads suffixes from files in specific format and push it to _SUFFIXIES_ dict
-        in format: key - suffix, value - list of tuples, which contains three elements - meaning,
-        list of examples, list of specs.
+        in format: key - suffix, value - tuple of three list-values the same size:
+        list of meanings,list of examples, list of specs.
         """
         if cls._is_load_:
             return
