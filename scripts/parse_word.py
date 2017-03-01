@@ -65,6 +65,11 @@ def getMorphemes(word):
 # def
 
 if __name__ == "__main__":
+
+    result = getMorphemes(u'поросятина')
+    print len(result.roots)
+    print result.roots[0]
+    """
     parse_file_to_array("dicts//roots.txt", root_array)    
     parse_file_to_array("dicts//prefixes.txt", pref_array)    
     parse_file_to_array("dicts//suffixes.txt", suff_array)    
@@ -94,7 +99,7 @@ if __name__ == "__main__":
                 #break
             print '.',
     print count
-    """test = getMorphemes(dict, u'расщеплять')
+    test = getMorphemes(dict, u'расщеплять')
     print test.roots[0]
     test = getMorphemes(dict, u'абиссинка')
     print test.roots[0]"""
