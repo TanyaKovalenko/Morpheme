@@ -3,12 +3,12 @@ import codecs
 from collections import defaultdict
 
 class WordMorphemes:
-    prefixes = set()
-    roots = set()
-    suffixes = set()
-    main_part = set()
-    connecting_vowel = set()
-    endings = set()
+    prefixes = list()
+    roots = list()
+    suffixes = list()
+    main_part = list()
+    connecting_vowel = list()
+    endings = list()
 # class
 
 class WordMorphemeDicts:
@@ -31,8 +31,6 @@ class WordMorphemeDicts:
         # def
 
         def __load(self):
-            print "LOAD"
-
             actions = {u'корень': 'roots', u'корни': 'roots',
                        u'приставка': 'prefixes', u'приставки': 'prefixes',
                        u'суффикс': 'suffixes', u'суффиксы': 'suffixes',
@@ -59,7 +57,7 @@ class WordMorphemeDicts:
 
                             # TODO: just for check
                             morph_list = filter(lambda x: len(x) != 0,
-                                           map(lambda x: x.strip(), morpheme.split(',')))
+                                           map(lambda x: x.strip().replace(u'ё', u'е'), morpheme.split(',')))
                             morph_set = set(morph_list)
 
                             # NOTE: some words has more than one same roots
@@ -67,7 +65,7 @@ class WordMorphemeDicts:
                             #    print word, '|', line
                             # if
 
-                            setattr(word_morphems, actions[morpheme_name], morph_set)
+                            setattr(word_morphems, actions[morpheme_name], list(morph_set))
                         # if
                     # for
 
@@ -117,15 +115,15 @@ class WordMorphemeDicts:
 
     @classmethod
     def __load_default_dict(cls):
-        cls.add_dict('../dicts/words_like_morphemes.txt')
+        # TODO: it's for current implementation
+        if len(cls.__dicts) == 0:
+            cls.add_dict('../dicts/words_like_morphemes.txt')
+        # if
     # def
 
     @classmethod
     def get(cls, word):
-        if len(cls.__dicts) == 0:
-            # TODO: it's for current implementation
-            cls.__load_default_dict()
-        # if
+        cls.__load_default_dict()
 
         for d in cls.__dicts:
             # TODO: it returns the first entrance, it could be wrong
@@ -140,6 +138,8 @@ class WordMorphemeDicts:
 
     @classmethod
     def contains(cls, word):
+        cls.__load_default_dict()
+
         for d in cls.__dicts:
             if word in d:
                 return True
@@ -151,15 +151,33 @@ class WordMorphemeDicts:
 
     @classmethod
     def morphemes(cls):
-        result = WordMorphemes()
+        cls.__load_default_dict()
+
+        # local func-helper
+        def apply_to_attr(obj, func):
+            for name in WordMorphemes.__dict__.keys():
+                if name.find('__') == -1:
+                    func(obj, name)
+                # if
+            # for
+        # def
+
+        res_obj = WordMorphemes()
+
+        # transform to sets
+        apply_to_attr(res_obj, lambda o, name: setattr(o, name, set()))
 
         for d in cls.__dicts:
             for value in d.morphemes():
-                result.roots += value.roots
+                apply_to_attr(res_obj, lambda o, name:
+                    getattr(o, name).update(getattr(value, name)))
             # for
         # for
 
-        return result
+        # transform to lists
+        apply_to_attr(res_obj, lambda o, name: setattr(o, name, list(getattr(o, name))))
+
+        return res_obj
     # def
 
     @classmethod
@@ -179,5 +197,5 @@ if __name__ == "__main__":
 
     result = WordMorphemeDicts.morphemes()
 
-    print len(result.roots)
+    print result.roots[0]
 # if
