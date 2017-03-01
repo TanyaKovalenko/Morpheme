@@ -9,9 +9,9 @@ suff_array = []
 
 class Word_Morpheme:
     def __init__(self):    
-        self.prefixies = []
+        self.prefixes = []
         self.roots = []
-        self.suffixies = []
+        self.suffixes = []
         self.main_part = []
         self.connecting_vowel = []
         self.ending = []
@@ -52,7 +52,7 @@ def parse_by_morphemes(elem):
             break
     for dict_pref in pref_array:
         if dict_pref in word[:start_root_index]:
-            word_morphems.prefixies.append(dict_pref)
+            word_morphems.prefixes.append(dict_pref)
             #root = dict_root
             word = word.replace(dict_pref, "")
             start_root_index -= len(dict_pref)
@@ -60,27 +60,25 @@ def parse_by_morphemes(elem):
 
     for dict_suf in suff_array:
         if dict_suf in word:
-            word_morphems.suffixies.append(dict_suf)
+            word_morphems.suffixes.append(dict_suf)
             if (word.find(dict_suf) > 0):
-                word_morphems.suffixies.append(word[:word.find(dict_suf)])
+                word_morphems.suffixes.append(word[:word.find(dict_suf)])
                 word = word.replace(word[:word.find(dict_suf)], "")
             word = word.replace(dict_suf, "")
     return word_morphems
 
 def getMorphemes(main_dict, word):
-    dict_result = main_dict[word]
-
-    if len(dict_result.roots) == 0:
+    if main_dict.get(word):
+    	dict_result = main_dict[word]
+    else:
        dict_result = parse_by_morphemes(word)
-    #dict_result = parse_by_morphemes(word)
-
     return dict_result
 # def
 
 if __name__ == "__main__":
     parse_file_to_array("dicts//roots.txt", root_array)    
-    parse_file_to_array("dicts//prefixies.txt", pref_array)    
-    parse_file_to_array("dicts//suffixies.txt", suff_array)    
+    parse_file_to_array("dicts//prefixes.txt", pref_array)    
+    parse_file_to_array("dicts//suffixes.txt", suff_array)    
     root_array = sorted(root_array, key=len, reverse=True)
     pref_array = sorted(pref_array, key=len, reverse=True)
     suff_array = sorted(suff_array, key=len, reverse=True)
@@ -91,14 +89,14 @@ if __name__ == "__main__":
         for test_word in test_keys:
             my_result = getMorphemes(main_dict, test_word)
             right_result = main_dict[test_word]
-            if ((my_result.prefixies != right_result.prefixies) or (my_result.roots != right_result.roots) or (my_result.suffixies != right_result.suffixies) or (my_result.connecting_vowel != right_result.connecting_vowel)):
+            if ((my_result.prefixes != right_result.prefixes) or (my_result.roots != right_result.roots) or (my_result.suffixes != right_result.suffixes) or (my_result.connecting_vowel != right_result.connecting_vowel)):
                 problem_words.write("\n============== WORD: " + test_word + "=============")
-                problem_words.write("\nMy prefix: " + ", ".join(my_result.prefixies))
-                problem_words.write("\nRight prefix: " + ", ".join(right_result.prefixies))
+                problem_words.write("\nMy prefix: " + ", ".join(my_result.prefixes))
+                problem_words.write("\nRight prefix: " + ", ".join(right_result.prefixes))
                 problem_words.write("\nMy roots: " + ", ".join(my_result.roots))
                 problem_words.write("\nRight roots: " + ", ".join(right_result.roots))
-                problem_words.write("\nMy suffixies: " + ", ".join(my_result.suffixies))
-                problem_words.write("\nRight suffixies: " + ", ".join(right_result.suffixies))
+                problem_words.write("\nMy suffixes: " + ", ".join(my_result.suffixes))
+                problem_words.write("\nRight suffixes: " + ", ".join(right_result.suffixes))
                 count += 1
                 #problem_words.write("\nMy connecting_vowel: " + ", ".join(my_result.connecting_vowel))
                 #problem_words.write("\nRight connecting_vowel: " + ", ".join(right_result.connecting_vowel)) + '\n'
