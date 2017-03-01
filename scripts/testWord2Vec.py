@@ -24,11 +24,7 @@ class model(object):
         		self.model_word_from_word[self.model.index2word[inx].split('_')[0]] = self.model.index2word[inx]
 		
 	
-
 	def get_new_morphemes_model(self, path_to_pref, path_to_suff):
-		# main_dict - a dictionari with morphemes for some words
-                main_dict = morphemes.form_dict()
-		
 		for inx in range(len(self.model.vocab) - 1):
                 	# model_word is a word from w2v model (it contains part of speech for this word in format wordname_POSNAME)
                 	model_word = self.model.index2word[inx]
@@ -42,7 +38,7 @@ class model(object):
 				print "WORD = " + word
 			 
 			# getMorphemes function returns the object with morphemes of a word
-                	word_morphemes = parse_word.getMorphemes(main_dict, word)
+                	word_morphemes = parse_word.getMorphemes(word)
                 	
 			# parser is used to get meanings of morphemes
                 	suffixes_prefix_parser.parser.specify_file(path_to_pref)
@@ -72,6 +68,8 @@ class model(object):
                                         print "suff: "
                                         print word_morphemes.suffixes[inx].strip()
 				meanings, _, _ = suffixes_prefix_parser.parser.get(word_morphemes.suffixes[inx].strip())
+				if word == u"поросятина":
+					print meanings
 				if (len(meanings) > 0):
                         		suff_meanings.append(meanings[0])
 
