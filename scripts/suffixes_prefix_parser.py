@@ -13,7 +13,7 @@ class parser(object):
 
     _MORPHEMES_ = defaultdict(lambda: ([], [], []))
     _is_load_ = False
-    _PATH_TO_MORPHEMES = "prefixies.txt"
+    _PATH_TO_MORPHEMES = "prefixes.txt"
 
     @classmethod
     def __load(cls):
@@ -146,7 +146,7 @@ class parser(object):
 def open_other_suffixes():
     l = []
 
-    with codecs.open('../dicts/morphemes_lists/suffixies.txt', 'r', encoding='utf-8') as fin:
+    with codecs.open('../dicts/morphemes_lists/suffixes.txt', 'r', encoding='utf-8') as fin:
         for line in fin:
             if line.find('(') != -1 or \
                 line.find(')') != -1 or \
@@ -163,29 +163,9 @@ def open_other_suffixes():
 # def
 
 if __name__ == '__main__':
-    parser.specify_file("../dicts/suffixies.txt")
+    parser.specify_file("../dicts/suffixes.txt")
 
-    meanings, _, _ = parser.get(u'ололо')
+    meanings, _, _ = parser.get(u'ат')
 
-    assert len(meanings) == 0
-
-    meanings, _, _ = parser.get(u'ич')
-
-    print meanings[0]
-
-
-    #keys = parser.keys()
-    #s1 = set(keys)
-
-    #keys2 = open_other_suffixes()
-    #s2 = set(keys2)
-
-    #dif = s2 - s1
-    #xor = s2.intersection(s1)
-
-    #print len(s2), len(s1), len(dif), len(xor)
-
-    #for v in xor:
-    #    print v
-    # for
+    print len(meanings)
 # if
