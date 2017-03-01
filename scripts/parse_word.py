@@ -1,22 +1,11 @@
 # coding=utf-8
 import codecs
-from morphemes import form_dict
+from morphemes import WordMorphemes, WordMorphemeDicts
 
 file_name = 'dicts//words_like_morhemes.txt'
 root_array = []
 pref_array = []
 suff_array = []
-
-class Word_Morpheme:
-    def __init__(self):    
-        self.prefixes = []
-        self.roots = []
-        self.suffixes = []
-        self.main_part = []
-        self.connecting_vowel = []
-        self.ending = []
-    # def
-# class
 
 def parse_file_to_array(file, array):
     with codecs.open(file, "r", encoding='utf-8') as dict_file:    
@@ -35,7 +24,7 @@ def parse_file_to_array(file, array):
                         array.append(element_slash.strip().lower())
 
 def parse_by_morphemes(elem):
-    word_morphems = Word_Morpheme()
+    word_morphems = WordMorphemes()
     word = elem
     start_root_index = -1
     for dict_root in root_array:
@@ -67,12 +56,12 @@ def parse_by_morphemes(elem):
             word = word.replace(dict_suf, "")
     return word_morphems
 
-def getMorphemes(main_dict, word):
-    if main_dict.get(word):
-    	dict_result = main_dict[word]
-    else:
-       dict_result = parse_by_morphemes(word)
-    return dict_result
+def getMorphemes(word):
+    if WordMorphemeDicts.contains(word):
+        return WordMorphemeDicts.get(word)
+    # if
+
+    return parse_by_morphemes(word)
 # def
 
 if __name__ == "__main__":

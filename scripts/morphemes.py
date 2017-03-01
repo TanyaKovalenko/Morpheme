@@ -153,17 +153,13 @@ class WordMorphemeDicts:
     def morphemes(cls):
         result = WordMorphemes()
 
-        roots = set()
-
         for d in cls.__dicts:
             for value in d.morphemes():
-                for x in value.roots:
-                    roots.add(x.strip())
-                # for
+                result.roots += value.roots
             # for
         # for
 
-        return roots
+        return result
     # def
 
     @classmethod
@@ -179,10 +175,9 @@ class WordMorphemeDicts:
 # class
 
 if __name__ == "__main__":
-    morphs = WordMorphemeDicts.get(u'кусок')
-    print morphs.roots[0]
+    #morphs = WordMorphemeDicts.get(u'кусок')
 
     result = WordMorphemeDicts.morphemes()
 
-    print len(result)
+    print len(result.roots)
 # if
