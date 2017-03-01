@@ -11,7 +11,7 @@ class parser(object):
     It allows to group different suffixes with the same meaning into one line.
     """
 
-    _MORPHEMES_ = defaultdict(lambda: list())
+    _MORPHEMES_ = defaultdict(lambda: ([], [], []))
     _is_load_ = False
     _PATH_TO_MORPHEMES = "prefixies.txt"
 
@@ -105,7 +105,7 @@ class parser(object):
                 # for
 
                 for key in keys:
-                    cls._MORPHEMES_[key].append((meanings, examples, specs))
+                    cls._MORPHEMES_[key] = (meanings, examples, specs)
                 # for
 
                 line_num += 1
@@ -164,18 +164,28 @@ def open_other_suffixes():
 
 if __name__ == '__main__':
     parser.specify_file("../dicts/suffixies.txt")
-    keys = parser.keys()
-    s1 = set(keys)
 
-    keys2 = open_other_suffixes()
-    s2 = set(keys2)
+    meanings, _, _ = parser.get(u'ололо')
 
-    dif = s2 - s1
-    xor = s2.intersection(s1)
+    assert len(meanings) == 0
 
-    print len(s2), len(s1), len(dif), len(xor)
+    meanings, _, _ = parser.get(u'ич')
 
-    for v in xor:
-        print v
+    print meanings[0]
+
+
+    #keys = parser.keys()
+    #s1 = set(keys)
+
+    #keys2 = open_other_suffixes()
+    #s2 = set(keys2)
+
+    #dif = s2 - s1
+    #xor = s2.intersection(s1)
+
+    #print len(s2), len(s1), len(dif), len(xor)
+
+    #for v in xor:
+    #    print v
     # for
 # if
