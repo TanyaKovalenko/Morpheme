@@ -193,8 +193,6 @@ class WordMorphemeDicts:
 # class
 
 if __name__ == "__main__":
-    #morphs = WordMorphemeDicts.get(u'кусок')
-
     result = WordMorphemeDicts.morphemes()
 
     print result.roots[0]
