@@ -3,7 +3,7 @@
 from collections import defaultdict
 import codecs
 
-class parser(object):
+class SuffixPrefixParser(object):
     """
     Load suffixes/prefixes from file and let to get info for every suffix.
     File should contains lines in following format:
@@ -15,18 +15,23 @@ class parser(object):
     _is_load_ = False
     _PATH_TO_MORPHEMES = "prefixes.txt"
 
-    @classmethod
-    def __load(cls):
+    def __init__(self, path_to_file=None):
+        if path_to_file:
+            self.specify_file(path_to_file)
+        # if
+    # def
+
+    def __load(self):
         """
         Loads suffixes from files in specific format and push it to _SUFFIXIES_ dict
         in format: key - suffix, value - tuple of three list-values the same size:
         list of meanings,list of examples, list of specs.
         """
-        if cls._is_load_:
+        if self._is_load_:
             return
         # if
 
-        with codecs.open(cls._PATH_TO_MORPHEMES, "r", encoding='utf-8') as fin:
+        with codecs.open(self._PATH_TO_MORPHEMES, "r", encoding='utf-8') as fin:
             line_num = 1
 
             for line in fin:
@@ -105,41 +110,37 @@ class parser(object):
                 # for
 
                 for key in keys:
-                    cls._MORPHEMES_[key] = (meanings, examples, specs)
+                    self._MORPHEMES_[key] = (meanings, examples, specs)
                 # for
 
                 line_num += 1
             # for
         # with
 
-        cls._is_load_ = True
+        self._is_load_ = True
     # def
 
-    @classmethod
-    def get(cls, key):
+    def get(self, key):
         """
         :param key:
         :return: list, where each element is tuple contains three elements - meaning, list of examples, list of specs
         """
-        cls.__load()
+        self.__load()
 
-        return cls._MORPHEMES_[key]
+        return self._MORPHEMES_[key]
     # def
 
-    @classmethod
-    def len(cls):
-        return len(cls._MORPHEMES_)
+    def len(self):
+        return len(self._MORPHEMES_)
     # def
 
-    @classmethod
-    def keys(cls):
-        return cls._MORPHEMES_.keys()
+    def keys(self):
+        return self._MORPHEMES_.keys()
     # def
 
-    @classmethod
-    def specify_file(cls, path_to_dict):
-        cls._PATH_TO_MORPHEMES = path_to_dict
-        cls.__load()
+    def specify_file(self, path_to_dict):
+        self._PATH_TO_MORPHEMES = path_to_dict
+        self.__load()
     # def
 # class
 
@@ -163,9 +164,15 @@ def open_other_suffixes():
 # def
 
 if __name__ == '__main__':
-    parser.specify_file("../dicts/suffixes.txt")
+    #parser.specify_file("../dicts/suffixes.txt")
 
-    meanings, _, _ = parser.get(u'ат')
+    parser = SuffixPrefixParser("../dicts/suffixes.txt")
+    parser2 = SuffixPrefixParser("../dicts/prefixes.txt")
 
-    print len(meanings)
+    meanings, _, _ = parser.get(u'ят')
+    meanings2, _, _ = parser2.get(u'пре')
+
+    print len(meanings), meanings[0]
+    print len(meanings2), meanings2[0]
+
 # if
