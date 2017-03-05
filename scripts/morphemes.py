@@ -42,7 +42,7 @@ class WordMorphemeDicts:
             with codecs.open(self.path_to_file, 'r', encoding='utf-8') as f:
                 for line in f:
                     word_morphems = WordMorphemes()
-                    word = line.split(':')[0]
+                    word = line.split(':')[0].strip().replace(u'ё', u'е')
                     start_inx = line.find(': ') + len(': ')
                     line = line[start_inx:len(line)]
                     morphemes = line.split(';')
@@ -147,6 +147,19 @@ class WordMorphemeDicts:
         # for
 
         return False
+    # def
+
+    @classmethod
+    def words(cls):
+        cls.__load_default_dict()
+
+        set_words = set()
+
+        for d in cls.__dicts:
+            set_words.update(set(d.words()))
+        # for
+
+        return set_words
     # def
 
     @classmethod
