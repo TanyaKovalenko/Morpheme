@@ -7,7 +7,8 @@ import re
 import numpy as np
 import morphemes
 import parse_word
-import suffixes_prefix_parser
+from operator import itemgetter
+from suffixes_prefix_parser import SuffixPrefixParser
 from collections import defaultdict
 
 class model(object):
@@ -19,13 +20,18 @@ class model(object):
 		self.word_from_model_word = defaultdict(lambda: list())
         	self.model_word_from_word = defaultdict(lambda: list())	
 		
-		for inx in range(len(self.model.vocab) - 1):
+		for inx in range(len(self.model.vocab)):
         		self.word_from_model_word[self.model.index2word[inx]] = self.model.index2word[inx].split('_')[0]
         		self.model_word_from_word[self.model.index2word[inx].split('_')[0]] = self.model.index2word[inx]
 		
 	
 	def get_new_morphemes_model(self, path_to_pref, path_to_suff):
-		for inx in range(len(self.model.vocab) - 1):
+		print "get new model..."
+		# SuffixPrefixParser is used to get meanings of morphemes
+                pref_parser = SuffixPrefixParser(path_to_pref)
+	        suff_parser = SuffixPrefixParser(path_to_suff)
+	
+		for inx in range(len(self.model.vocab)):
                 	# model_word is a word from w2v model (it contains part of speech for this word in format wordname_POSNAME)
                 	model_word = self.model.index2word[inx]
 
@@ -39,10 +45,7 @@ class model(object):
 			 
 			# getMorphemes function returns the object with morphemes of a word
                 	word_morphemes = parse_word.getMorphemes(word)
-                	
-			# parser is used to get meanings of morphemes
-                	suffixes_prefix_parser.parser.specify_file(path_to_pref)
-                	suffixes_prefix_parser.parser.specify_file(path_to_suff)
+
 			if word == u"поросятина":
 				print "PREF = "
 				print ', '.join(word_morphemes.prefixes)
@@ -50,55 +53,86 @@ class model(object):
 				print ', '.join(word_morphemes.roots)
                 		print "SUFF = "
                         	print ', '.join(word_morphemes.suffixes)
+			
 
 			pref_meanings = list()
-                	for inx in range(len(word_morphemes.prefixes) - 1):
-				# methon suffixes_prefix_parser.parser.get return list of triples [[meaning1, examples, specs], [], [] ] 
-	                      	if word == u"поросятина":
-					print "pref: "
-					print word_morphemes.prefixes[inx].strip()
-				meanings, _, _ = suffixes_prefix_parser.parser.get(word_morphemes.prefixes[inx].strip())
-                        	if (len(meanings) > 0):	
-					pref_meanings.append(meanings[0])
+                        for inx in range(len(word_morphemes.prefixes)):
+                                # methon suffixes_prefix_parser.parser.get return list of triples [[meaning1, examples, specs], [], [] ]
+                                if word == u"поросятина":
+                                        print "pref: "
+                                        print word_morphemes.prefixes[inx].strip()
+                                meanings, _, _ = pref_parser.get(word_morphemes.prefixes[inx].strip())
+                                if word == u"поросятина":
+                                        print ' ,'.join(meanings)
+                                sim_to_word = list()
+                                if (len(meanings) > 0):
+                                        for mean in meanings:
+                                                if self.model_word_from_word.get(pref_mean):
+                                                        sim_to_word.append((mean, abs(self.model.similarity(self.model_word_from_word[mean], self.model_word_from_word[word]))))
+                                        if len(sim_to_word) > 0:
+                                                max_sim = max(sim_to_word, key = lambda item:item[0])[1]
+                                                max_sim_mean = max(sim_to_word, key = lambda item:item[0])[0]
+                                                if word == u"поросятина":
+                                                        print "Max sim = " + max_sim
+                                                        print "Max mean = " + max_sim_mean
+                                        pref_meanings.append((max_sim_mean, max_sim))
 
-                	suff_meanings = list()
-                	for inx in range(len(word_morphemes.suffixes) - 1):
+                        pref_vects = list()
+                        pref_mean_sim = 0
+                        if len(pref_meanings) > 0:
+                                sim_to_word = list()
+                                for pref_mean in pref_meanings:
+                                        sim, mean = pref_mean
+                                        if word == u"поросятина":
+                                                print "MEANING_PREF = " + mean
+                                        pref_vects.append((self.model[self.model_word_from_word[mean]], sim))
+
+			suff_meanings = list()
+                	for inx in range(len(word_morphemes.suffixes)):
 				# methon suffixes_prefix_parser.parser.get return list of triples [[meaning1, examples, specs], [], [] ]
 				if word == u"поросятина":
                                         print "suff: "
                                         print word_morphemes.suffixes[inx].strip()
-				meanings, _, _ = suffixes_prefix_parser.parser.get(word_morphemes.suffixes[inx].strip())
+				meanings, _, _ = suff_parser.get(word_morphemes.suffixes[inx].strip())
 				if word == u"поросятина":
-					print meanings
+					print ' ,'.join(meanings)
+				sim_to_word = list()
 				if (len(meanings) > 0):
-                        		suff_meanings.append(meanings[0])
-
-                	pref_vects = list()
-                	if len(pref_meanings) > 0:
-				if word == u"поросятина":
-					print "MEANING_PREF = " + pref_meanings[0]
-				for pref_mean in pref_meanings:
-                        		if self.model_word_from_word.get(pref_mean):
-						pref_vects.append(self.model[self.model_word_from_word[pref_mean]])
+					for mean in meanings:
+						if self.model_word_from_word.get(mean):
+                                                	sim_to_word.append((mean, abs(self.model.similarity(self.model_word_from_word[mean], self.model_word_from_word[word]))))
+                                	if len(sim_to_word) > 0:
+                                        	max_sim = max(sim_to_word, key = lambda item:item[0])[1]
+                                        	max_sim_mean = max(sim_to_word, key = lambda item:item[0])[0]
+                                        	if word == u"поросятина":
+                                                	print "Max sim = " + max_sim
+                                                	print "Max mean = " + max_sim_mean
+                        		suff_meanings.append((max_sim_mean, max_sim))
 
                 	suff_vects = list()
-                	if len(suff_meanings) > 0:
-				if word == u"поросятина":
-					print "MEANING_SUFF = " + suff_meanings[0]
+                        suff_mean_sim = 0
+			if len(suff_meanings) > 0:
+				sim_to_word = list()
 				for suff_mean in suff_meanings:
-					if self.model_word_from_word.get(suff_mean):
-						suff_vects.append(self.model[self.model_word_from_word[suff_mean]])
-
-			if (len(pref_vects) == 0):
-				pref_vects = [[0]*len(old_vec)]*len(old_vec)
-                	
-			if (len(suff_vects) == 0):
-                                suff_vects = [[0]*len(old_vec)]*len(old_vec)
+					sim, mean = suff_mean
+					if word == u"поросятина":
+                                                print "MEANING_SUFF = " + mean
+					if self.model_word_from_word.get(mean)
+					suff_vects.append((self.model[self.model_word_from_word[mean]], sim))
 
 			new_model = {}
-			new_model[model_word] = np.add(old_vec, np.add(pref_vects[0],suff_vects[0]))
+			new_model[model_word] = old_vec
 
-                return new_model
+#			if pref_mean_sim != 0 and suff_mean_sim != 0:
+#				new_model[model_word] = 0.5 * np.add(old_vec, 0.5 * np.add(pref_mean_sim * pref_vect, suff_vect_sim * suff_vect))
+
+#			else:
+#				if pref_mean_sim != 0 and suff_mean_sim == 0:
+#					new_model[model_word] = 0.5 * np.add(old_vec, pref_mean_sim * pref_vect)
+#				else:
+#					if pref_mean_sim == 0 and suff_mean_sim != 0: 
+#						new_model[model_word] = 0.5 * np.add(old_vec, suff_mean_sim * suff_vect)
+		return new_model
 	
 
 # --------------------------------------------------------- Form vocabulary from input data ( start ) ---------------------------------------------------------------------- 
@@ -150,7 +184,6 @@ for fname in os.listdir(dataDir):
 #
 
 if __name__ == "__main__":
-
 	# ------------ web --------------------
 	#web_model_size = 353608
 	#web_model_file_name = 'web.model.bin'
