@@ -32,23 +32,26 @@ class model(object):
         suff_parser = SuffixPrefixParser(path_to_suff)
         morpheme_parser = [pref_parser, suff_parser]
         new_model = {}
-
-        for inx in range(len(self.model.vocab)):
+        good_mean = 0
+        for word_inx in range(len(self.model.vocab)):
             # model_word is a word from w2v model (it contains part of speech for this word in format wordname_POSNAME)
-            model_word = self.model.index2word[inx]
+            model_word = self.model.index2word[word_inx]
 
             # word - word from model after remove it's part of speech
             word = self.word_from_model_word[model_word]
 
             # old_vector - w2v vector of word
             old_vec = self.model[model_word]
-            if word == u"поросятина":
+            
+            test_word = u"бездельник"
+
+            if word == test_word:
                 print "WORD = " + word
 
             # getMorphemes function returns the object with morphemes of a word
             word_morphemes = parse_word.getMorphemes(word)
 
-            if word == u"поросятина":
+            if word == test_word:
                 print "PREF = "
                 print ', '.join(word_morphemes.prefixes)
                 print "ROOTS = "
@@ -56,18 +59,19 @@ class model(object):
                 print "SUFF = "
                 print ', '.join(word_morphemes.suffixes)
 
-            morphemes_lists = [word_morphemes.prefixes, word_morphemes.suffixies]
+            morphemes_count = len(word_morphemes.prefixes) + len(word_morphemes.roots) + len(word_morphemes.suffixes)
 
+            morphemes_lists = [word_morphemes.prefixes, word_morphemes.suffixes]
             morphemes_vects = list()
             for i in range(len(morphemes_lists)):
                 morphemes_list = morphemes_lists[i]
                 for inx in range(len(morphemes_list)):
                     # methon suffixes_prefix_parser.parser.get return list of triples [[meaning1, examples, specs], [], [] ]
-                    if word == u"поросятина":
+                    if word == test_word:
                         print "morpheme: "
                         print morphemes_list[inx].strip()
                     meanings, _, _ = morpheme_parser[i].get(morphemes_list[inx].strip())
-                    if word == u"поросятина":
+                    if word == test_word:
                         print ' ,'.join(meanings)
                     sims_to_word = list()
                     if (len(meanings) > 0):
@@ -77,19 +81,27 @@ class model(object):
                     if len(sims_to_word) > 0:
                         max_sim = max(sims_to_word, key = lambda item:item[0])[1]
                         max_sim_mean = max(sims_to_word, key = lambda item:item[0])[0]
-                        if word == u"поросятина":
-                            print "Max sim = " + max_sim
-                            print "Max mean = " + max_sim_mean
-                        morphemes_vects.append((self.model[self.model_word_from_word[max_sim_mean]], max_sim))
+                        if word == test_word:
+                            print "Max sim = "
+                            print max_sim
+                            print "Max mean = "
+                            print max_sim_mean
+                        if (max_sim > 0.1):
+                            good_mean += 1 
+                            morphemes_vects.append((self.model[self.model_word_from_word[max_sim_mean]], max_sim))
 
-            new_model[model_word] = old_vec
+            new_model[word] = old_vec
+            
+            if (len(morphemes_vects) > 0):
+                for morph_inx in range(morphemes_count - len(morphemes_vects)):
+                    old_vec = np.add(old_vec, old_vec)
+                for vect, sim in morphemes_vects:
+                    sim_vect_list = [item * sim for item in vect]
+                    old_vec = np.add(old_vec, sim_vect_list)
+                new_vec = [item / morphemes_count for item in old_vec]
+                new_model[model_word] = new_vec
 
-            for vect, sim in morphemes_vects:
-                sim_vect_list = [item * sim for item in vect]
-                old_vec = np.add(old_vec, sim_vect_list)
-                new_vec = [item / len(morphemes_vects) for item in old_vec]
-            new_model[model_word] = new_vec
-
+        print good_mean
         return new_model
 
 
@@ -164,4 +176,5 @@ if __name__ == "__main__":
     ruwiki_model = model(ruwiki_model_file_name)
 
     my_new_model = ruwiki_model.get_new_morphemes_model(pref_file_name, suff_file_name)
-
+    
+    print my_new_model[u"поросятина"]
