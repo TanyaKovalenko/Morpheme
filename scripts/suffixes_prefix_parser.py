@@ -32,9 +32,10 @@ class SuffixPrefixParser(object):
         # if
 
         with codecs.open(self._PATH_TO_MORPHEMES, "r", encoding='utf-8') as fin:
-            line_num = 1
+            line_num = 0
 
             for line in fin:
+                line_num += 1
                 line = line.strip()
 
                 # check whether there comments
@@ -112,8 +113,6 @@ class SuffixPrefixParser(object):
                 for key in keys:
                     self._MORPHEMES_[key] = (meanings, examples, specs)
                 # for
-
-                line_num += 1
             # for
         # with
 
