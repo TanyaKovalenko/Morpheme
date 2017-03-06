@@ -3,12 +3,15 @@ import codecs
 from collections import defaultdict
 
 class WordMorphemes:
-    prefixes = list()
-    roots = list()
-    suffixes = list()
-    main_part = list()
-    connecting_vowel = list()
-    endings = list()
+
+    def __init__(self):
+        self.prefixes = list()
+        self.roots = list()
+        self.suffixes = list()
+        self.main_part = list()
+        self.connecting_vowel = list()
+        self.endings = list()
+    # def
 # class
 
 class WordMorphemeDicts:
