@@ -1,8 +1,12 @@
 # coding=utf-8
 import codecs
 from collections import defaultdict
+from utils.common import norm
+import os
 
 class WordMorphemes:
+
+    TAGS = ['P', 'R', 'S', 'C', 'E']
 
     def __init__(self):
         self.prefixes = list()
@@ -11,6 +15,7 @@ class WordMorphemes:
         self.main_part = list()
         self.connecting_vowel = list()
         self.endings = list()
+        self.all_in_order = list()
     # def
 # class
 
@@ -37,6 +42,7 @@ class WordMorphemeDicts:
             actions = {u'корень': 'roots', u'корни': 'roots',
                        u'приставка': 'prefixes', u'приставки': 'prefixes',
                        u'суффикс': 'suffixes', u'суффиксы': 'suffixes',
+                       u'формообразующий суффикс': 'suffixes',
                        u'основа слова': 'main_part', u'основы': 'main_part',
                        u'соединительная гласная': 'connecting_vowel',
                        u'соединительные гласные': 'connecting_vowel',
@@ -45,30 +51,51 @@ class WordMorphemeDicts:
             with codecs.open(self.path_to_file, 'r', encoding='utf-8') as f:
                 for line in f:
                     word_morphems = WordMorphemes()
-                    word = line.split(':')[0].strip().replace(u'ё', u'е')
+                    word = norm(line.split(':')[0])
                     start_inx = line.find(': ') + len(': ')
                     line = line[start_inx:len(line)]
                     morphemes = line.split(';')
 
                     for item in morphemes:
-                        pos = item.rfind('-', 0)
+                        pos = item.find('-', 0)
 
                         if pos != -1:
                             item = item.replace('.', '')
-                            morpheme = item[:pos - 1].strip()
-                            morpheme_name = item[pos + 1:].strip()
+                            morpheme_name = item[:pos].strip()
+                            morpheme = item[pos + 1:].strip()
 
-                            # TODO: just for check
                             morph_list = filter(lambda x: len(x) != 0,
-                                           map(lambda x: x.strip().replace(u'ё', u'е'), morpheme.split(',')))
+                                           map(norm, morpheme.split(',')))
+                            
+                            # Lets add morheme in order with corresponding tag
+                            # to identify morpheme further. Tag is made from
+                            # the first letter, then 'suffixes' will stay 'S'.
+                            # Exlude 'M', because 'main_part' is not a morpheme.
+                            for m in morph_list:
+                                try:
+                                    TAG = actions[morpheme_name][:1].upper()
+                                except:
+                                    continue
+                                # try
+                                
+                                if TAG != 'M' and len(m):
+                                    word_morphems.all_in_order.append((TAG, m))
+                                # if
+                            # for
+
                             morph_set = set(morph_list)
 
                             # NOTE: some words has more than one same roots
                             #if len(morph_list) != len(morph_set):
                             #    print word, '|', line
                             # if
-
-                            setattr(word_morphems, actions[morpheme_name], list(morph_set))
+                            
+                            try:
+                                setattr(word_morphems, actions[morpheme_name], list(morph_set))
+                            except:
+                                # NOTE: skip key-errors, ie when morpheme_name is not in actions
+                                pass
+                            # try
                         # if
                     # for
 
@@ -120,7 +147,10 @@ class WordMorphemeDicts:
     def __load_default_dict(cls):
         # TODO: it's for current implementation
         if len(cls.__dicts) == 0:
-            cls.add_dict('../dicts/words_like_morphemes.txt')
+            dir_name = os.path.dirname(os.path.realpath(__file__))
+            file_name = os.path.join(*[dir_name, '..', 'dicts', 'all_words_like_morphemes.txt'])
+
+            cls.add_dict(file_name)
         # if
     # def
 
@@ -210,6 +240,4 @@ class WordMorphemeDicts:
 
 if __name__ == "__main__":
     result = WordMorphemeDicts.morphemes()
-
-    print result.roots[0]
 # if
