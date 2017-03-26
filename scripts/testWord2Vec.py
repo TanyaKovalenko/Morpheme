@@ -45,19 +45,10 @@ class model(object):
             
             test_word = u"бездельник"
 
-            if word == test_word:
-                print "WORD = " + word
 
             # getMorphemes function returns the object with morphemes of a word
             word_morphemes = parse_word.getMorphemes(word)
 
-            if word == test_word:
-                print "PREF = "
-                print ', '.join(word_morphemes.prefixes)
-                print "ROOTS = "
-                print ', '.join(word_morphemes.roots)
-                print "SUFF = "
-                print ', '.join(word_morphemes.suffixes)
 
             morphemes_count = len(word_morphemes.prefixes) + len(word_morphemes.roots) + len(word_morphemes.suffixes)
 
@@ -67,12 +58,7 @@ class model(object):
                 morphemes_list = morphemes_lists[i]
                 for inx in range(len(morphemes_list)):
                     # methon suffixes_prefix_parser.parser.get return list of triples [[meaning1, examples, specs], [], [] ]
-                    if word == test_word:
-                        print "morpheme: "
-                        print morphemes_list[inx].strip()
                     meanings, _, _ = morpheme_parser[i].get(morphemes_list[inx].strip())
-                    if word == test_word:
-                        print ' ,'.join(meanings)
                     sims_to_word = list()
                     if (len(meanings) > 0):
                         for mean in meanings:
@@ -81,11 +67,6 @@ class model(object):
                     if len(sims_to_word) > 0:
                         max_sim = max(sims_to_word, key = lambda item:item[0])[1]
                         max_sim_mean = max(sims_to_word, key = lambda item:item[0])[0]
-                        if word == test_word:
-                            print "Max sim = "
-                            print max_sim
-                            print "Max mean = "
-                            print max_sim_mean
                         if (max_sim > 0.1):
                             good_mean += 1 
                             morphemes_vects.append((self.model[self.model_word_from_word[max_sim_mean]], max_sim))
@@ -101,7 +82,6 @@ class model(object):
                 new_vec = [item / morphemes_count for item in old_vec]
                 new_model[model_word] = new_vec
 
-        print good_mean
         return new_model
 
 
@@ -153,6 +133,14 @@ for fname in os.listdir(dataDir):
 # --------------------------------------------------------- Form dict of russian words ( end ) ---------------------------------------------------------------------------
 #
 
+def load_model(file_name):
+    # TODO: it's for current implementation
+    dir_name = os.path.dirname(os.path.realpath(__file__))
+    name = os.path.join(*[dir_name, '..', '..', file_name])
+    the_model = model(name)
+    return the_model
+
+
 if __name__ == "__main__":
     # ------------ web --------------------
     #web_model_size = 353608
@@ -168,12 +156,14 @@ if __name__ == "__main__":
 
     # ---------- ruwikiruscorpora -------------
     ruwiki_model_size = 392339
-    ruwiki_model_file_name = '../../ruwikiruscorpora.model.bin'
+    ruwiki_model_file_name = 'ruwikiruscorpora.model.bin'
 
-    pref_file_name = "../dicts/prefixes.txt"
-    suff_file_name = "../dicts/suffixes.txt"
+    dir_name = os.path.dirname(os.path.realpath(__file__))
 
-    ruwiki_model = model(ruwiki_model_file_name)
+    pref_file_name = os.path.join(*[dir_name, '..', 'dicts', 'prefixes.txt'])
+    suff_file_name = os.path.join(*[dir_name, '..', 'dicts', 'suffixes.txt']) 
+
+    ruwiki_model = load_model(ruwiki_model_file_name)
 
     my_new_model = ruwiki_model.get_new_morphemes_model(pref_file_name, suff_file_name)
     

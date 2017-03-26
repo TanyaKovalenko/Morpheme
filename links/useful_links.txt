@@ -6,3 +6,4 @@
 4) https://grammatika-rus.ru/znachenie-latinskih-morfem/ - словарь значений ЛАТИНСКИХ/ГРЕЧЕСКИХ морфем
 5) http://ling.go.mail.ru/dsm/ru/about - модели корпусов русского языка 
 6) https://arxiv.org/pdf/1701.02481v1.pdf - главная статья
+7) http://www.medslv.ru - словарь медицинских терминов 
