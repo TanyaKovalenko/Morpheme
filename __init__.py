@@ -1,0 +1,10 @@
+scripts/
+        __init__.py                
+        morphemes.py
+        parse_word.py             
+        suffixes_prefix_parser.py
+        visualiseVecs.py
+        testWord2Vec.py
+utils/
+      __init__.py
+      common.py
