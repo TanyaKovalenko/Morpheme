@@ -1,4 +1,5 @@
 # coding=utf-8
+import os
 import codecs
 from morphemes import WordMorphemes, WordMorphemeDicts
 from utils.common import norm
@@ -45,17 +46,21 @@ def __parse_file_to_array(file_name):
 
 def __load_standalone_morphemes():
     global suff_array, root_array, pref_array
+    dir_name = os.path.dirname(os.path.realpath('__file__'))
+    root_file = os.path.join(*[dir_name, 'dicts', 'morphemes_lists', 'roots.txt'])
+    pref_file = os.path.join(*[dir_name, 'dicts', 'morphemes_lists', 'prefixes.txt'])
+    suff_file = os.path.join(*[dir_name, 'dicts', 'morphemes_lists', 'suffixes.txt'])
 
     if len(root_array) == 0:
-        root_array = __parse_file_to_array('../dicts/morphemes_lists/roots.txt')
+        root_array = __parse_file_to_array(root_file)
     # if
 
     if len(pref_array) == 0:
-        pref_array = __parse_file_to_array('../dicts/morphemes_lists/prefixes.txt')
+        pref_array = __parse_file_to_array(pref_file)
     # if
 
     if len(suff_array) == 0:
-        suff_array = __parse_file_to_array('../dicts/morphemes_lists/suffixes.txt')
+        suff_array = __parse_file_to_array(suff_file)
     # if
 # if
 
@@ -131,8 +136,8 @@ def getMorphemes(word):
     """
     Check whether word in dictionary and if not then try to parse it
     """
-    #if WordMorphemeDicts.contains(word):
-    #    return WordMorphemeDicts.get(word)
+    if WordMorphemeDicts.contains(word):
+        return WordMorphemeDicts.get(word)
     # if
 
     return parse_by_morphemes(word)
