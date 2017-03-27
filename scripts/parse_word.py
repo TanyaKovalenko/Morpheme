@@ -146,10 +146,13 @@ if __name__ == "__main__":
     root_count = 0
     pref_count = 0
     suf_count = 0
+    equal_count = 0
+
     for word in WordMorphemeDicts.words():
         m_orig = WordMorphemeDicts.get(word)
         m_test = getMorphemes(word)
         all_count += 3
+        is_equal = True
 
         count = 0
         n_count = 0
@@ -210,13 +213,19 @@ if __name__ == "__main__":
 
         if all_count % 5000 == 0:
             print ((test_count + 0.0) / all_count) * 100, ((false_negative + 0.0) / all_count) * 100
+            print equal_count, all_count / 3
         # if
+
+        equal_count += set(m_orig.prefixes) == set(m_test.prefixes) and \
+                        set(m_orig.roots) == set(m_test.roots) and \
+                        set(m_orig.suffixes) == set(m_test.suffixes)
     # for
 
     all_count /= 3
     print 'Roots :', (root_count / all_count) * 100
     print 'Pref :', (pref_count / all_count) * 100
     print 'Suf :', (suf_count / all_count) * 100
+    print 'EQUAL :', (equal_count + 0.0) / all_count
     """
     m = getMorphemes(u'предчувствие')
 

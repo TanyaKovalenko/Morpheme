@@ -15,6 +15,8 @@ class WordMorphemes:
         self.main_part = list()
         self.connecting_vowel = list()
         self.endings = list()
+
+        # it contains pairs (tag, morpheme)
         self.all_in_order = list()
     # def
 # class
@@ -52,6 +54,7 @@ class WordMorphemeDicts:
                 for line in f:
                     word_morphems = WordMorphemes()
                     word = norm(line.split(':')[0])
+
                     start_inx = line.find(': ') + len(': ')
                     line = line[start_inx:len(line)]
                     morphemes = line.split(';')
