@@ -2,6 +2,8 @@
 from scripts.morphemes import WordMorphemeDicts
 from collections import defaultdict
 import codecs
+import time
+from multiprocessing import Pool
 
 def get(word, pos):
     if pos < 0:
@@ -53,13 +55,19 @@ def get_morph(x, w, fs, d, filter_key):
     # try
 # def
 
+D = defaultdict(lambda: defaultdict(lambda: 0))
+matches = 0
+
 def parse_word(word, start_from):
+    global D
+    global matches
+
     features_f = [ lambda _, w, pos: len(w) - pos
                    #, lambda _, w, pos: get(w, pos - 3)
                    #, lambda _, w, pos: get(w, pos - 2)
-                   , lambda _, w, pos: get(w, pos - 1)
+                   #, lambda _, w, pos: get(w, pos - 1)
                    , lambda l, w, pos: w[pos: pos + l]
-                   , lambda l, w, pos: get(w, pos + l)
+                   #, lambda l, w, pos: get(w, pos + l)
                    , lambda l, w, pos: get(w, pos + l + 1)]
 
     if start_from > 4:
@@ -69,7 +77,7 @@ def parse_word(word, start_from):
     result = []
     for inx in range(1, len(word)):
         # get statistic for concrete substring
-        D = defaultdict(lambda: defaultdict(lambda: 0))
+        #D = defaultdict(lambda: defaultdict(lambda: 0))
 
         if start_from != 0:
             sub = word[-(inx + start_from):-start_from]
@@ -78,9 +86,13 @@ def parse_word(word, start_from):
         # if
         sub_key = tuple(map(lambda f: f(len(sub), word, len(word) - (inx + start_from)), features_f))
 
-        for w in WordMorphemeDicts.words():
-            get_morph(sub, w, features_f, D, sub_key)
-        # for
+        if sub_key not in D:
+            for w in WordMorphemeDicts.words():
+                get_morph(sub, w, features_f, D, sub_key)
+            # for
+        else:
+            matches += 1
+        # if
 
         # apply statistic to determine max probability
         max_prob, max_key = 0.0, None
@@ -137,33 +149,79 @@ def find_max(A, inx, length):
     return max_p, max_key, max_sub
 # def
 
+def parse(word):
+    start = 0
+    result = []
+
+    while True:
+        result.append(parse_word(word, start))
+        
+        start += 1
+
+        if start == len(word):
+            break
+        # if
+    # while
+
+    p, key, sub = find_max(result, 0, len(word))
+# def
+
 #orig_word = u'заделать'
-orig_word = u'бледно-голубой'
+#orig_word = u'бледно-голубой'
 #orig_word = u'стеснительно' #!!!
 #orig_word = u'тамга'
 
 #orig_word = u'заречься'
 #orig_word = u'истребитель'
-#orig_word = u'поросенок'
+orig_word = u'поросенок'
 #orig_word = u'сопеть'
-start = 0
+#start = 0
 
-result = []
+with open('result.csv', 'w') as fout:
+    for w in WordMorphemeDicts.words():
+        print w
+        start_time = time.time()
+        p, res_key, res_sub = parse(w)
+        #print key, '|'.join(sub)
+        
+        orig_split = ''
+        for t, sub in WordMorphemeDicts.get(w).all_in_order:
+            orig_split += sub + '(' + t + ') '
+        # for
+        print orig_split
 
-while True:
-    result.append(parse_word(orig_word, start))
+        result_split = ''
+        for t, sub in zip(res_key, res_sub):
+            result_split + sub + '(' + t + ') '
+        # for
 
-    start += 1
+        dif_time = time.time() - start_time
+        print "------------", dif_time, matches
 
-    if start == len(orig_word):
-        break
-    # if
+        fout.write(str(dif_time) + ',' + str(matches) + '\n') 
+        matches = 0
+    # for
+# with
+
+
+#result = []
+
+#while True:
+#    result.append(parse_word(orig_word, start))
+
+#   start += 1
+
+#    if start == len(orig_word):
+#        break
+#    # if
 # while
 
-p, key, sub = find_max(result, 0, len(orig_word))
+#for w in WordMorphemeDicts.words():
+#    p, key, sub = find_max(result, 0, len(orig_word))
+# for
 
-for k, s in zip(key, sub):
-    print k, s
+#for k, s in zip(key, sub):
+#    print k, s
 # for
 
 # стеснительно
