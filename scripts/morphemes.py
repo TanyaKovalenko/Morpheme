@@ -18,6 +18,9 @@ class WordMorphemes:
 
         # it contains pairs (tag, morpheme)
         self.all_in_order = list()
+        # it has length the same as a word,
+        # every element contains corresponding tags for every letter
+        self.tag_for_letter = list()
     # def
 # class
 
@@ -100,6 +103,16 @@ class WordMorphemeDicts:
                                 pass
                             # try
                         # if
+                    # for
+
+                    # map tag for every letter
+                    word_morphems.tag_for_letter = [''] * len(word)
+                    letter_inx = 0
+                    for tag, sub in word_morphems.all_in_order:
+                        for _ in range(len(sub)):
+                            word_morphems.tag_for_letter[letter_inx] = tag
+                            letter_inx += 1
+                            # for
                     # for
 
                     self.words_morphemes[word] = word_morphems

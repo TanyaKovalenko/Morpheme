@@ -55,6 +55,30 @@ def get_morph(x, w, fs, d, filter_key):
     # try
 # def
 
+def get_morph_by_pos(x, w, fs, d, filter_key, pos):
+    tag_for_letter = WordMorphemeDicts.get(w).tag_for_letter
+    all_in_order = WordMorphemeDicts.get(w).all_in_order
+    pos = len(w) + pos
+
+    sub = w[pos: pos + len(x)]
+
+    l = len(x)
+    tags = set(tag_for_letter[pos: pos + len(x)])
+
+    if x == sub:
+        key = tuple(map(lambda f: f(l, w, pos), fs))
+
+        if key == filter_key:
+            tag = next(iter(tags))
+            if len(tags) == 1 and (tag, sub) in all_in_order:
+                d[key][tag] += 1
+            # if
+
+            d[key]["ALL"] += 1
+        # if
+    # if
+# def
+
 D = defaultdict(lambda: defaultdict(lambda: 0))
 matches = 0
 
@@ -67,15 +91,17 @@ def parse_word(word, start_from):
                    #, lambda _, w, pos: get(w, pos - 2)
                    #, lambda _, w, pos: get(w, pos - 1)
                    , lambda l, w, pos: w[pos: pos + l]
-                   #, lambda l, w, pos: get(w, pos + l)
-                   , lambda l, w, pos: get(w, pos + l + 1)]
+                   , lambda l, w, pos: get(w, pos + l) ]
+                   # , lambda l, w, pos: get(w, pos + l + 1)]
 
+    small_feature = False
     if start_from > 4:
         features_f = features_f[1:]
+        small_feature = True
     # if
 
     result = []
-    for inx in range(1, len(word)):
+    for inx in range(1, len(word) - start_from + 1):
         # get statistic for concrete substring
         #D = defaultdict(lambda: defaultdict(lambda: 0))
 
@@ -88,7 +114,10 @@ def parse_word(word, start_from):
 
         if sub_key not in D:
             for w in WordMorphemeDicts.words():
-                get_morph(sub, w, features_f, D, sub_key)
+                if small_feature:
+                    get_morph(sub, w, features_f, D, sub_key)
+                else:
+                    get_morph_by_pos(sub, w, features_f, D, sub_key, -(inx + start_from))
             # for
         else:
             matches += 1
@@ -99,6 +128,7 @@ def parse_word(word, start_from):
 
         for key, value in D[sub_key].iteritems():
             if key == 'ALL':
+
                 continue
             # if
 
@@ -164,7 +194,14 @@ def parse(word):
     # while
 
     p, key, sub = find_max(result, 0, len(word))
+    return p, key, sub
 # def
+
+
+p, k, s = parse(u'образовав')
+print k
+print s
+raise
 
 #orig_word = u'заделать'
 #orig_word = u'бледно-голубой'
