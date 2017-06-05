@@ -57,7 +57,15 @@ word2vec, vector model, morphemes, naive Bayesian classifier
 
 Word2Vec is one of the most popular algorithms for generating vector model of the text. The input of the Word2Vec algorithm is the corpys of any language. The result of the algorithm is a set of word-vector pairs. The basic principle of constructing vectors using Word2Vec is based on the assumption that words appearing in similar contexts with similar speed are semantically close, which means that in the vector space they are side by side. More formally, vector representations of the words with similar semantics have very small cosine distance. For example, the words \emph{"bed"} and \emph{"pillow"} are semantically close. 
 
-In synthetic languages, for example, in Russian, each word consists of its main part (the root of the word) and additional morphemes (prefixes, suffixes and endings). Each morpheme, which is part of the word, has a certain semantic connotation. For example, take the word \emph{"unprofessional"}. This word has a prefix \emph{"non"}, the meaning of which is \emph{"absence"}. Another example - word \emph{"pianist"}. This word has a suffix \emph{"ist"}, the meaning of which is \emph{"profession"}. These examples show that each morpheme makes a definite sense in the word. Therefore, by improving the approach
+In synthetic languages, for example, in Russian, each word consists of its main part (the root of the word) and additional morphemes (prefixes, suffixes and endings). Each morpheme, which is part of the word, has a certain semantic connotation. For example, take the word \emph{"unprofessional"}. This word has a prefix \emph{"non"}, the meaning of which is \emph{"absence"}. Another example - word \emph{"pianist"}. This word has a suffix \emph{"ist"}, the meaning of which is \emph{"profession"}. These examples show that each morpheme makes a definite sense in the word. So we improve the approach of using the vector representation of words by a deeper morphemic analysis of the words and adjusting the vector of each word with meaning of word's morphemes.
+
+
+
+
+
+
+
+
 
 
 
