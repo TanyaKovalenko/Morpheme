@@ -45,59 +45,32 @@ ITMO University, St. Petersburg, Kronverksky Pr. 49,\\
 \maketitle
 
 \begin{abstract}
-
-Modern NLP tasks like santiment analysis, semantic analysis, text entity extration and others depend on the language model quality. Language structure influences on quality: if some model fits well for analytic language, for synthetic language it doesn't. For example, famous word2vec model has good results for English language (English is rather analytic language, than synthetic), but meets problems for synthetic languages due the high inflection for some NLP tasks. Since every morphemes in synthetic languages contain information, we propose to discuss morpheme level model to solve different NLP tasks. As the base language for experiments we use Russian language. Firstly we describe how to build morpheme extractor from prepared dictionaries, then show the way how it could be applied for NLP tasks, and finally we discuss about results, pros and cons, and futute work.
-
+Modern NLP tasks like santiment analysis, semantic analysis, text entity extration and others depend on the language model quality. Language structure influences on quality: if some model fits well for analytic language, for synthetic language it doesn't. For example, famous word2vec~\cite{w2v} model has good results for English language (English is rather analytic language, than synthetic), but meets problems for synthetic languages due the high inflection for some NLP tasks. Since every morphemes in synthetic languages contain information, we propose to discuss morpheme level model to solve different NLP tasks. As the base language for experiments we use Russian language. Firstly we describe how to build morpheme extractor from prepared dictionaries, then show the way how it could be applied for NLP tasks, and finally we discuss about results, pros and cons, and future work.
 \end{abstract}
 \begin{keywords}
-word2vec, vector model, morphemes, naive Bayesian classifier
+NLP, word2vec, santiment analysis, semantic analysis, text entity extration, synthetic language, morphemes, naive Bayesian classifier
 \end{keywords}
 
 \section{Introduction}
 
 Word2Vec is one of the most popular algorithm for generating word embeddings of the text. The input of the Word2Vec is the corpus of any language. The result of the algorithm is a set of word-vector pairs. The basic principle of constructing vectors using Word2Vec is based on the assumption that words appearing in similar contexts with similar speed are semantically close, which means that in the vector space they are side by side. For example, the words \emph{"bed"} and \emph{"pillow"} are semantically close, so they have very small cosine distance and they lie next to each other in the vector space.
 
-In synthetic languages, for example, in Russian, each word consists of its main part (the root of the word) and additional morphemes (prefixes, suffixes and endings). Each morpheme, which is part of the word, has a certain semantic connotation. For example, take the word \emph{"unprofessional"}. This word has a prefix \emph{"non"}, the meaning of which is \emph{"absence"}. Another example - word \emph{"pianist"}. This word has a suffix \emph{"ist"}, the meaning of which is \emph{"profession"}. These examples show that each morpheme makes a definite sense in the word. So we improve the approach of using the vector representation of words by a deeper morphemic analysis of the words and adjusting the vector of each word with meaning of word's morphemes.
+Each word in synthetic languages, for example Russian, consists of the main part (the root of the word) and additional morphemes like prefixes, suffixes and endings. Each morpheme has a certain semantic meaning. For example, the word \emph{"unprofessional"} has a prefix \emph{"non"}, the meaning of which is \emph{"absence"}. Another example - word \emph{"pianist"}, this word has the suffix \emph{"ist"}, the meaning of which is \emph{"profession"}. These examples show how morphemes in a word change the meaning. We take this fact into account to build the vector representation of words that could be built in synthetic way from the vectors of underlying morphemes. Also we spread this idea to adjust word vector representation by its morphemes vector representation. 
 
-In the first chapter of this paper we describe prepared morphemes dictionaries. The second part of the paper is devoted to our algorithm for extracting morphemes from the words. This algorithm was created using the naive Bayesian classifier. In the third part we give an estimate of the accuracy of our algorithm. In the last chapter we apply our model for the task of classifying words by topic and represent the result of it.
-
-
+We think that it's important for corpus based models like word2vec, because they work for only words from a corpus, and synthetic languages have very wide universe of different words that leads to use gargantuan corpuses. However even using big corpuses has a problem for some domain specific texts where words building is common used like in chemestry.
 
 
+The goal of our work is to improve the word2vec model. We suggest new method for adjust word2vec vectors by vectors of morphemes meanings. To do it we at first prepare morphemes dictionaries. Then we create new algorithm to extract morphemes from the word. Then we get morphemes' meanings from the dictionaries and convert them into vectors by word2vec model. Further, we сalculate new vector for the each word in the text by formula, based on morphemes' meanings vectors and initial word2vec vector.
 
+In Section~\ref{sec:dictionaries} of this paper we describe prepared morphemes dictionaries. Section~\ref{sec:dictionaries} of the paper is devoted to our algorithm for extracting morphemes from the words. This algorithm was created using the naive Bayesian classifier. In Section~\ref{sec:dictionaries} we give an estimate of the accuracy of our algorithm. In Section~\ref{sec:problem} we apply our model for the task of classifying words by topic and represent the result of it.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%NOT OUR!!!
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\section{Dictionaries}
+\label{sec:dictionaries}
 
-
-
-%AAF read 14.09
-Automated simultaneous selection of a learning algorithm and its hyperparameters is a sophisticated problem. Usually, this problem is divided into two subproblems that are solved independently: algorithm selection and hyperparameter optimization. The first is to select an algorithm from a set of algorithms (algorithm portfolio). The second is to find the best hyperparameters for preselected algorithm.
-
-%AAF read 14.09
-The first subproblem is typically solved by testing each of the algorithms with prechosen hyperparameters in the portfolio by many practitioners. Other methods are also in use, such as selecting algorithms randomly, by heuristics or using \emph{k-fold cross-validation}~\cite{kfoldcv}. But the last method requires running and then comparing all the algorithms. The other methods are not universally applicable. However, this subproblem has been in the scope of research interest for decades. Decision rules were used in several decades old papers on algorithm selection from a portfolio~\cite{aha}. As an example, such rules are created to choose from 8 algorithms in~\cite{alism}.
-
-%AAF read 15.09
-Nowadays, more effective approaches exists such as meta learning~\cite{metalearn,abdulrahman2015algorithm}. This approach is to reduce the algorithm selection problem to a supervised learning problem. It requires a training set of datasets $D$. For all $d \in D,$ meta-feature vector is evaluated. Meta-features are useful characteristics of datasets, such as number of categorical or numerical features of an object $x \in d$, size of $d$ and many others~\cite{afil2015,castiello2005meta}. After that, all the algorithms are run on all the datasets $d \in D$. Thus class labels are formed based on empirical risk evaluation. Then a meta-classifier is learnt on the prepared data with datasets as objects and best algorithms as labels. It is worth to note that it is better to solve this problem as the learning to rank problem~\cite{brazdil2003ranking,cashmeta2}.
-
-%AAF read 15.09
-The second subproblem is a hyperparameter optimization that is to find hyperparameter vector for a learning algorithm that leads to the best performance of this algorithm for a given dataset. For example, hyperparameters of the Support Vector Machine (SVM) include kernel function and its hyperparameters; for a neural net, they include the number of hidden layers and the number of neurons in each of them. In practice, algorithms hyperparameters are usually chosen manually~\cite{hutman}. Moreover, sometimes the selection problem can be reduced to a simple optimization problem (primarily for statistical and regression algorithms), as, for instance, in~\cite{strijov}. However, this method is not universally applicable. Since hyperparameter optimization of classification algorithms is often applied manually, it requires a lot of time and do not lead to acceptable performance. There are several algorithms to solve the second subproblem automatically: Grid Search~\cite{random}, Random Search~\cite{grid}, Stochastic Gradient Descent~\cite{sgd}, Tree-structured Parzen estimator~\cite{tpe}, and the Bayesian Optimization including Sequential Model-Based Optimization (SMBO)~\cite{bayes1}. In~\cite{smac}, Sequential model-based algorithm configuration (SMAC) is introduced. It is based on SMBO algorithm. Another idea is implemented in predicting the best hyperparameter vector with meta-learning approach~\cite{mantovani2015meta}. Reinforcement-based approach was used in~\cite{jamieson2015non} to operate several optimization threads with different settings.
-
-%AAF read 14.09
-Solution for the simultaneous selection of an algorithm and its hyperparameters is important for machine learning applications, but only a few of papers are devoted to this search. Moreover, these papers consider only a special case. 
-
-%AAF read 15.09
-One of the possible solutions is to build a huge set of algorithms with prechosen hyperparameters and select from it. This solution was implemented in~\cite{cashmeta1}, in which a set of about 300 algorithms with chosen hyperparameters was used. However, such pure algorithm selection approach cannot provide any insurance of these algorithms quality for a new problem. This set may simply not include a hyperparameter vector for one of the presented learning algorithms with the best performance.
-
-%AAF read 15.09
-Another possible solution is sequential optimization of hyperparameters for every learning algorithm in portfolio and selection the best of them. This solution is implemented in the Auto-WEKA library~\cite{autowekap}, it allows to choose one of the 27 base learning algorithms, 10 meta-algorithms and 2 ensemble algorithms and optimize its hyperparameters with SMAC method simultaneously and automatically. This method is described in detail in~\cite{autowekap}. It is clear that if we use the method, then it takes enormous time and may be referred to as exhaustive search (while, in fact, it is not due to the infinity of hyperparameter spaces).
-
-%AAF read 15.09
-The goal of this work is to suggest a method for simultaneous learning algorithm and its parameters selection being faster than the exhaustive search without affecting found solution quality. In order to do so, we use multi-armed bandit-based approach.
-
-%AAF read 15.09
-The remainder of this paper is organized as follows. In Section~\ref{sec:problem}, we describe in details the learning algorithm and its hyperparameter selection problem and its two subproblems. The suggested method, based on multi-armed bandit problem, is presented in Section~\ref{sec:suggest}. In Section~\ref{sec:experiment}, experiment results are presented and discussed. Section~\ref{sec:conclusion} concludes.
-
-This paper extends a paper accepted to International Conference on Intelligent Data Processing: Theory and Applications 2016.
 
 \section{Problem Statement}
 \label{sec:problem}
