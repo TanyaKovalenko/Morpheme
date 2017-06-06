@@ -59,6 +59,7 @@ Word2Vec is one of the most popular algorithm for generating word embeddings of 
 
 In synthetic languages, for example, in Russian, each word consists of its main part (the root of the word) and additional morphemes (prefixes, suffixes and endings). Each morpheme, which is part of the word, has a certain semantic connotation. For example, take the word \emph{"unprofessional"}. This word has a prefix \emph{"non"}, the meaning of which is \emph{"absence"}. Another example - word \emph{"pianist"}. This word has a suffix \emph{"ist"}, the meaning of which is \emph{"profession"}. These examples show that each morpheme makes a definite sense in the word. So we improve the approach of using the vector representation of words by a deeper morphemic analysis of the words and adjusting the vector of each word with meaning of word's morphemes.
 
+In the first chapter of this paper we describe prepared morphemes dictionaries. The second part of the paper is devoted to our algorithm for extracting morphemes from the words. This algorithm was created using the naive Bayesian classifier. In the third part we give an estimate of the accuracy of our algorithm. In the last chapter we apply our model for the task of classifying words by topic and represent the result of it.
 
 
 
