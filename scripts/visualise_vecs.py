@@ -7,7 +7,7 @@ import logging
 import numpy as np
 import matplotlib.pyplot as plt
 
-from testWord2Vec import model
+from morpheme_model import model
 from operator import itemgetter
 from suffixes_prefix_parser import SuffixPrefixParser
 from collections import defaultdict
