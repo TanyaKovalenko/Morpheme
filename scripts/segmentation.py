@@ -136,11 +136,14 @@ def getMorphemes(word):
     """
     Check whether word in dictionary and if not then try to parse it
     """
-    if WordMorphemeDicts.contains(word):
-        return WordMorphemeDicts.get(word)
-    # if
+    try:
+        if WordMorphemeDicts.contains(word):
+            return WordMorphemeDicts.get(word)
+        # if
 
-    return parse_by_morphemes(word)
+        return parse_by_morphemes(word)
+    except Exception:
+        print "Error to get morphemes from word:" + word
 # def
 
 if __name__ == "__main__":
