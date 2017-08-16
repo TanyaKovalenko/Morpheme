@@ -65,7 +65,7 @@ def __load_standalone_morphemes():
 # if
 
 
-def parse_by_morphemes(word):
+def segment_to_morphemes(word):
     __load_standalone_morphemes()
 
     word = norm(word)
@@ -141,7 +141,7 @@ def getMorphemes(word):
             return WordMorphemeDicts.get(word)
         # if
 
-        return parse_by_morphemes(word)
+        return segment_to_morphemes(word)
     except Exception:
         print "Error to get morphemes from word:" + word
 # def
