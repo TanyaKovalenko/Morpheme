@@ -1,8 +1,8 @@
 # coding=utf-8
+import os
 import codecs
 from collections import defaultdict
 from utils.common import norm
-import os
 
 class WordMorphemes:
 

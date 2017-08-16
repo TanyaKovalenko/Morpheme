@@ -1,15 +1,18 @@
 # coding=utf-8
 import os
+import re
 import codecs
 import gensim
 import logging
-import re
 import numpy as np
-import morphemes
-import segmentation_JULIA
+
 from operator import itemgetter
-from suffixes_prefix_parser import SuffixPrefixParser
 from collections import defaultdict
+
+import morphemes
+import segmentation_RUSLAN
+
+from suffixes_prefix_parser import SuffixPrefixParser
 
 class model(object):
 
@@ -46,7 +49,7 @@ class model(object):
             test_word = u"бездельник"
 
             # getMorphemes function returns the object with morphemes of a word
-            word_morphemes = segmentation.getMorphemes(word)
+            word_morphemes = segmentation_RUSLAN.segment_word(word)
             # check if it's possible to split the word into morphemes
  
             if word_morphemes is not None:

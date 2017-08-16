@@ -1,9 +1,9 @@
 # coding=utf-8
-from morphemes import WordMorphemeDicts
 from collections import defaultdict
 import codecs
 import time
 from multiprocessing import Pool
+from morphemes import WordMorphemes, WordMorphemeDicts
 
 def get(word, pos):
     if pos < 0:
@@ -197,6 +197,28 @@ def parse(word):
     return p, key, sub
 # def
 
+def segment_word(word):
+    morphemes = WordMorphemes()
+    prob, keys, subs = parse(word)
+    print prob, keys, subs
+    for keyInx in keys:
+        if keys[keyInx] == 'P':
+            morphemes.prefixes.append(subs[keyInx])
+        # if
+        if keys[keyInx] == 'R':
+            morphemes.roots.append(subs[keyInx])
+        # if
+        if keys[keyInx] == 'S':
+            morphemes.suffixies.append(subs[keyInx])
+        # if
+        if keys[keyInx] == 'C':
+            morphemes.connecting_vowel.append(subs[keyInx])              
+        # if
+        if keys[keyInx] == 'E':
+            morphemes.ending.append(subs[keyInx])
+        # if
+    #for 
+    return morphemes
 
 #p, k, s = parse(u'образовав')
 #print k
@@ -210,16 +232,16 @@ def parse(word):
 
 #orig_word = u'заречься'
 #orig_word = u'истребитель'
-orig_word = u'поросенок'
+#orig_word = u'поросенок'
 #orig_word = u'сопеть'
 #start = 0
 
-pass_count = 0
-all_count = 0
+#pass_count = 0
+#all_count = 0
 
-_, _, sub = parse(orig_word)
+#_, _, sub = parse(orig_word)
 
-print ''.join(sub)
+#print ''.join(sub)
 
 """
 THIS IS WORKING CODE
