@@ -6,7 +6,7 @@ import logging
 import re
 import numpy as np
 import morphemes
-import segmentation
+import segmentation_JULIA
 from operator import itemgetter
 from suffixes_prefix_parser import SuffixPrefixParser
 from collections import defaultdict
