@@ -18,14 +18,19 @@ https://drive.google.com/file/d/0B19_r4ZqIbD5ZXU2V3ZTU3psX1U/view
 
 
 
-##Folders:
+## Folders:
 
-***dicts*** - our vacabularies.
+***\href{run:../dicts/}{dicts}*** - our vacabularies.
 + suffixes.txt - vocabulary of the suffixes with meanings and examples.
 + prefixes.txt - vocabulary of the prefixes with meanings and examples.
 + roots.txt - vocabulary of the roots with meanings and examples.
 
-  The format of every line in the dict is:
+  The format of every line in these vocabularies is:
+  
   *morpheme type - morpheme; morpheme type - morpheme; ....*
+  
   For example:
-  *word:morpheme type - morpheme; morpheme type - morpheme; ....*
+  
+  *goodness:root - good; suffix - ness.*
+  
++ all_words_like_morphemes
