@@ -20,7 +20,7 @@ https://drive.google.com/file/d/0B19_r4ZqIbD5ZXU2V3ZTU3psX1U/view
 
 ## Folders:
 
-***\href{run:../dicts/}{dicts}*** - our vacabularies.
+***[dicts](dicts/.)*** - our vacabularies.
 + suffixes.txt - vocabulary of the suffixes with meanings and examples.
 + prefixes.txt - vocabulary of the prefixes with meanings and examples.
 + roots.txt - vocabulary of the roots with meanings and examples.
