@@ -21,9 +21,9 @@ https://drive.google.com/file/d/0B19_r4ZqIbD5ZXU2V3ZTU3psX1U/view
 ## Folders:
 
 ***[dicts](dicts/.)*** - our vacabularies.
-+ suffixes.txt - vocabulary of the suffixes with meanings and examples.
-+ prefixes.txt - vocabulary of the prefixes with meanings and examples.
-+ roots.txt - vocabulary of the roots with meanings and examples.
++ [suffixes.txt](dicts/suffixes.txt) - vocabulary of the suffixes with meanings and examples.
++ [prefixes.txt](dicts/prefixes.txt) - vocabulary of the prefixes with meanings and examples.
++ [roots.txt](dicts/roots.txt) - vocabulary of the roots with meanings and examples.
 
   The format of every line in these vocabularies is:
   
@@ -31,6 +31,6 @@ https://drive.google.com/file/d/0B19_r4ZqIbD5ZXU2V3ZTU3psX1U/view
   
   For example:
   
-  *goodness:root - good; suffix - ness.*
+  *goodness: root - good; suffix - ness.*
   
-+ all_words_like_morphemes
++ [all_words_like_morphemes.txt](dicts/all_words_like_morphemes) - vocabulary of the words segmentation.
