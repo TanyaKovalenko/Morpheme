@@ -10,7 +10,7 @@ from operator import itemgetter
 from collections import defaultdict
 
 import morphemes
-import segmentation_RUSLAN
+import segmentation_JULIA as segmentation
 
 from suffixes_prefix_parser import SuffixPrefixParser
 
@@ -29,7 +29,6 @@ class model(object):
 
 
     def get_new_morphemes_model(self, path_to_pref, path_to_suff):
-        print "Form new morpheme model..."
         # SuffixPrefixParser is used to get meanings of morphemes
         pref_parser = SuffixPrefixParser(path_to_pref)
         suff_parser = SuffixPrefixParser(path_to_suff)
@@ -47,14 +46,13 @@ class model(object):
             old_vec = self.model[model_word]
             
             test_word = u"бездельник"
-
-            # getMorphemes function returns the object with morphemes of a word
-            word_morphemes = segmentation_RUSLAN.segment_word(word)
+            # segment_word function returns the object with morphemes of a word
+            word_morphemes = segmentation.getMorphemes(word)
             # check if it's possible to split the word into morphemes
- 
+             
             if word_morphemes is not None:
                 morphemes_count = len(word_morphemes.prefixes) + len(word_morphemes.roots) + len(word_morphemes.suffixes)
-
+            
                 morphemes_lists = [word_morphemes.prefixes, word_morphemes.suffixes]
                 morphemes_vects = list()
                 for i in range(len(morphemes_lists)):

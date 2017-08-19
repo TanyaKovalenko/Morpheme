@@ -197,11 +197,10 @@ def parse(word):
     return p, key, sub
 # def
 
-def segment_word(word):
+def segment_to_morphemes(word):
     morphemes = WordMorphemes()
     prob, keys, subs = parse(word)
-    print prob, keys, subs
-    for keyInx in keys:
+    for keyInx in range(len(keys)):
         if keys[keyInx] == 'P':
             morphemes.prefixes.append(subs[keyInx])
         # if
@@ -209,17 +208,30 @@ def segment_word(word):
             morphemes.roots.append(subs[keyInx])
         # if
         if keys[keyInx] == 'S':
-            morphemes.suffixies.append(subs[keyInx])
+            morphemes.suffixes.append(subs[keyInx])
         # if
         if keys[keyInx] == 'C':
             morphemes.connecting_vowel.append(subs[keyInx])              
         # if
         if keys[keyInx] == 'E':
-            morphemes.ending.append(subs[keyInx])
+            morphemes.endings.append(subs[keyInx])
         # if
     #for 
     return morphemes
 
+def getMorphemes(word):
+    """
+    Check whether word in dictionary and if not then try to segment it
+    """
+    try:
+        if WordMorphemeDicts.contains(word):
+            return WordMorphemeDicts.get(word)
+        # if
+#        return segment_to_morphemes(word)
+    except Exception:
+        print "Error to get morphemes from word '" + word + " '"
+# def
+                                                                 
 #p, k, s = parse(u'образовав')
 #print k
 #print s
@@ -239,9 +251,8 @@ def segment_word(word):
 #pass_count = 0
 #all_count = 0
 
-#_, _, sub = parse(orig_word)
-
-#print ''.join(sub)
+#_, _, sub = parse(u'находиться')
+#print ''.join(morphemes.roots)
 
 """
 THIS IS WORKING CODE
