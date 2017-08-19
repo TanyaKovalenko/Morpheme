@@ -15,3 +15,22 @@ https://drive.google.com/file/d/0B19_r4ZqIbD5ZXU2V3ZTU3psX1U/view
 9. Parametric model will be better (formula)
 10. We can teach word2vec with morphemes, not with words
 11. Test the model on more tasks
+
+
+
+## Folders:
+
+***[dicts](dicts/.)*** - our vacabularies.
++ [suffixes.txt](dicts/suffixes.txt) - vocabulary of the suffixes with meanings and examples.
++ [prefixes.txt](dicts/prefixes.txt) - vocabulary of the prefixes with meanings and examples.
++ [roots.txt](dicts/roots.txt) - vocabulary of the roots with meanings and examples.
+
+  The format of every line in these vocabularies is:
+  
+  *morpheme type - morpheme; morpheme type - morpheme; ....*
+  
+  For example:
+  
+  *goodness: root - good; suffix - ness.*
+  
++ [all_words_like_morphemes.txt](dicts/all_words_like_morphemes) - vocabulary of the words segmentation.
