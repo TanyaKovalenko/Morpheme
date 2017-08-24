@@ -13,7 +13,7 @@ import morphemes
 import segmentation_JULIA as segmentation
 
 from suffixes_prefix_parser import SuffixPrefixParser
-
+from morphemes import WordMorphemeDicts
 
 class model(object):
 
@@ -27,12 +27,25 @@ class model(object):
         for inx in range(len(self.model.vocab)):
             self.word_from_modelWord[self.model.index2word[inx]] = self.model.index2word[inx].split('_')[0]
             self.modelWord_from_word[self.model.index2word[inx].split('_')[0]] = self.model.index2word[inx]
-    
+        
+        self.roots_avg_vects = self.form_roots_vects()
+
+    def form_roots_vects(self):
+        roots_vects = defaultdict(list)
+        roots_avg_vects = dict()
+        for word in WordMorphemeDicts.words():
+            if word in self.modelWord_from_word:
+                model_word = self.modelWord_from_word[word]
+                for root in WordMorphemeDicts.get(word).roots:
+                    vect = self.model[model_word]
+                    roots_vects[root].append(vect)
+                                                                                             
+        for root in roots_vects:
+            roots_avg_vects[root] = sum(roots_vects[root]) / len(roots_vects[root])
+        
+        return roots_avg_vects
+
     def recalculate_vect(self, word, path_to_pref, path_to_suff, min_sim_value):
-        #TODO - this is while we take word only from corp
-        #model_word is a word from w2v model (it contains part of speech for this word in format wordname_POSNAME)
-        if word not in self.modelWord_from_word:
-            return None
         # SuffixPrefixParser is used to get meanings of morphemes
         pref_parser = SuffixPrefixParser(path_to_pref)
         suff_parser = SuffixPrefixParser(path_to_suff)
@@ -51,18 +64,31 @@ class model(object):
                     if (len(meanings) > 0):
                         for mean in meanings:
                             if self.modelWord_from_word.get(mean):
-                                sims_to_word.append((mean, abs(self.model.similarity(self.modelWord_from_word[mean], self.modelWord_from_word[word]))))          
+                                if self.modelWord_from_word.get(word):
+                                    sims_to_word.append((mean, abs(self.model.similarity(self.modelWord_from_word[mean], self.modelWord_from_word[word]))))
+                                else:
+                                    list_words_for_sim = self.model.similar_by_vector(self.roots_avg_vects[word], topn=1, restrict_vocab=None)
+                                    word_for_sim, _ = list_words_for_sim[0]
+                                    sims_to_word.append((mean, abs(self.model.similarity(self.modelWord_from_word[mean], word_for_sim))))
                         if len(sims_to_word) > 0:
                             max_sim = max(sims_to_word, key = lambda item:item[0])[1]
                             max_sim_mean = max(sims_to_word, key = lambda item:item[0])[0]          
                             if (max_sim > min_sim_value):
                                 morphemes_vects.append((self.model[self.modelWord_from_word[max_sim_mean]], max_sim))                
-
-        # model_word is a word from w2v model (it contains part of speech for this word in format wordname_POSNAME)
-        model_word = self.modelWord_from_word[word]        
-        # old_vector - w2v vector of word
-        old_vec = self.model[model_word]
-        result_new_vect = old_vec
+        
+        result_new_vect = list()
+        
+        if word not in self.modelWord_from_word:
+            if word not in self.roots_avg_vects:
+                return None
+            else:
+                result_new_vect = self.roots_avg_vects[word]
+        else:
+            # model_word is a word from w2v model (it contains part of speech for this word in format wordname_POSNAME)
+            model_word = self.modelWord_from_word[word]        
+            # old_vector - w2v vector of word
+            old_vec = self.model[model_word]
+            result_new_vect = old_vec
          
         sims = list()
         for _, sim in morphemes_vects:
@@ -117,14 +143,14 @@ def load_model(file_name):
     # ---------- ruwikiruscorpora -------------
     #ruwiki_model_size = 392339
     #ruwiki_model_file_name = 'ruwikiruscorpora.model.bin'
-
+    
     #dir_name = os.path.dirname(os.path.realpath(__file__))
 
     #pref_file_name = os.path.join(*[dir_name, '..', 'dicts', 'prefixes.txt'])
     #suff_file_name = os.path.join(*[dir_name, '..', 'dicts', 'suffixes.txt']) 
 
     #ruwiki_model = load_model(ruwiki_model_file_name)
-
+    #print ruwiki_model.model.similar_by_vector(ruwiki_model.model[ruwiki_model.modelWord_from_word[u'машина']], topn=1, restrict_vocab=None)
     #my_new_model = ruwiki_model.get_new_morphemes_model()
     
     #print ruwiki_model.recalculate_vect(u"поросятина", pref_file_name, suff_file_name, 0.1)
