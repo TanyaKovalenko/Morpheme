@@ -16,6 +16,18 @@ https://drive.google.com/file/d/0B19_r4ZqIbD5ZXU2V3ZTU3psX1U/view
 10. We can teach word2vec with morphemes, not with words
 11. Test the model on more tasks
 
+**Remark:** w2v model does not contains these words, but our model contain.
+недокомпьютеризация
+сверхмодерновый
+загипнотизированный
+подвыпивший
+безнравственная
+уработался
+заработался
+сосисочки
+венички
+заделаться
+моднявый
 
 
 ## Folders:
