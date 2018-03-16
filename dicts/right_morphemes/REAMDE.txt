@@ -1,0 +1,18 @@
+'-' - ending
+'=' - prefix
+Here are morphemes based on the list of morhpemes built manudally from the dictionaries
+
+[root] 
+[root] [end]
+[root] [suf]
+[root] [suf] [end]
+[root] [suf] [suf]
+[root] [suf] [suf] [end]
+[pre] [root]
+[pre] [root] [suf]
+[pre] [root] [suf] [end]
+[pre] [root] [end]
+[pre] [pre] [root] 
+[pre] [pre] [root] [end]
+[root] [end] [root]
+[root] [end] [root] [end]
