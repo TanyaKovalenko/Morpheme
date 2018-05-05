@@ -51,7 +51,7 @@ def get_morph(x, w, fs, d, filter_key):
             morph_len -= 1
         # for
     except Exception as e:
-        print w
+        print(w)
     # try
 # def
 
@@ -86,13 +86,13 @@ def parse_word(word, start_from):
     global D
     global matches
 
-    features_f = [ lambda _, w, pos: len(w) - pos
+    features_f = [ #lambda _, w, pos: len(w) - pos
                    #, lambda _, w, pos: get(w, pos - 3)
                    #, lambda _, w, pos: get(w, pos - 2)
-                   , lambda _, w, pos: get(w, pos - 1)
+                    lambda _, w, pos: get(w, pos - 1)
                    , lambda l, w, pos: w[pos: pos + l]
-                   , lambda l, w, pos: get(w, pos + l) ]
-                   # , lambda l, w, pos: get(w, pos + l + 1)]
+                   #, lambda l, w, pos: get(w, pos + l) ]
+                   , lambda l, w, pos: get(w, pos + l + 1)]
 
     small_feature = False
     if start_from > 4:
@@ -124,7 +124,7 @@ def parse_word(word, start_from):
         # if
 
         # apply statistic to determine max probability
-        max_prob, max_key = 0.0, None
+        max_prob, max_key = 0.000001, None
 
         for key, value in D[sub_key].iteritems():
             if key == 'ALL':
@@ -155,8 +155,8 @@ def find_max(A, inx, length):
             break
         # if
 
-        if key is None:
-            continue
+        #if key is None:
+        #    continue
         # if
 
         if length - len(sub) > 0:
@@ -193,7 +193,10 @@ def parse(word):
         # if
     # while
 
+    #print result
+
     p, key, sub = find_max(result, 0, len(word))
+    
     return p, key, sub
 # def
 
@@ -225,14 +228,23 @@ def getMorphemes(word):
     """
     try:
         if WordMorphemeDicts.contains(word):
-            return WordMorphemeDicts.get(word)
-        # if
-#        return segment_to_morphemes(word)
+            result = []
+            for tag, sub in WordMorphemeDicts.get(word).all_in_order:
+                result.append(sub)
+            # for
+            
+            return result
+        else:
+            p, k, s = parse(word)
+
+            return reversed(s)
     except Exception:
         print "Error to get morphemes from word '" + word + " '"
 # def
-                                                                 
-#p, k, s = parse(u'образовав')
+
+#if __name__ == '__main__':
+#for sub in getMorphemes(u'железным'):
+#    print sub
 #print k
 #print s
 #raise
@@ -254,9 +266,90 @@ def getMorphemes(word):
 #_, _, sub = parse(u'находиться')
 #print ''.join(morphemes.roots)
 
+#-----------------------SLOVOROD--------------------------------#
+# --------------------------------------------------------------#
+# This code to compare dict form slovorod and our original dict #
+# --------------------------------------------------------------#
 """
-THIS IS WORKING CODE
+mismatch_num = 0
 
+slovorod_d = {}
+
+with codecs.open('slovorod_html/dict', 'r', encoding='utf-8') as fin:
+    for line in fin:
+        _ = line.strip().split('|')
+        key, value = _[0].strip(), _[1].strip()
+        
+        l = filter(lambda x: len(x) > 0, value.split('/'))
+        l = map(lambda x: x.replace(u'ё', u'е'), l)
+
+        slovorod_d[key] = l
+    # for
+# with
+
+for word in WordMorphemeDicts.words():
+    orig_list = []
+
+    if word not in slovorod_d:
+        continue
+    # if
+
+    for t, sub in WordMorphemeDicts.get(word).all_in_order:
+        orig_list.append(sub)
+    # for
+
+    if slovorod_d[word] != orig_list:
+        mismatch_num += 1
+
+        print '/'.join(slovorod_d[word]), ' | ', '/'.join(orig_list)
+
+        #if mismatch_num > 100:
+        #    break
+        # if
+    # if
+# for
+
+print mismatch_num
+"""
+
+
+# This code to get the values after the root, and roots
+out = codecs.open('init_split', 'w', encoding='utf-8')
+
+for w in WordMorphemeDicts.words():
+    res = []
+
+    for t, s in WordMorphemeDicts.get(w).all_in_order:
+        res.append(s)
+    # for
+
+    out.write(w + ' : ' + ','.join(res) + '\n')
+# for
+
+out.close()
+
+
+#for w in after_root:
+#    out.write(w + '\n')
+## for
+
+
+"""
+out = codecs.open('roots', 'w', encoding='utf-8')
+
+for w in roots:
+    out.write(w + '\n')
+# for
+
+out.close()
+"""
+
+#THIS IS WORKING CODE
+
+
+'''
+all_count = 0
+pass_count = 0
 errors_fout = codecs.open('errors_plus_one.csv', 'w', encoding='utf-8')
 
 
@@ -293,8 +386,7 @@ with open('result_plus_one.csv', 'w') as fout:
         matches = 0
     # for
 # with
-"""
-
+'''
 
 #result = []
 
