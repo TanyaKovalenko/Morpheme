@@ -143,7 +143,7 @@ def getMorphemes(word):
 
         return segment_to_morphemes(word)
     except Exception:
-        print "Error to get morphemes from word:" + word
+        print ("Error to get morphemes from word:" + word)
 # def
 
 if __name__ == "__main__":
@@ -220,8 +220,8 @@ if __name__ == "__main__":
             false_negative += (n_count + 0.0) / len(m_test.prefixes)
 
         if all_count % 5000 == 0:
-            print ((test_count + 0.0) / all_count) * 100, ((false_negative + 0.0) / all_count) * 100
-            print equal_count, all_count / 3
+            print (((test_count + 0.0) / all_count) * 100, ((false_negative + 0.0) / all_count) * 100)
+            print (equal_count, all_count / 3)
         # if
 
         equal_count += set(m_orig.prefixes) == set(m_test.prefixes) and \
@@ -230,10 +230,10 @@ if __name__ == "__main__":
     # for
 
     all_count /= 3
-    print 'Roots :', (root_count / all_count) * 100
-    print 'Pref :', (pref_count / all_count) * 100
-    print 'Suf :', (suf_count / all_count) * 100
-    print 'EQUAL :', (equal_count + 0.0) / all_count
+    print ('Roots :', (root_count / all_count) * 100)
+    print ('Pref :', (pref_count / all_count) * 100)
+    print ('Suf :', (suf_count / all_count) * 100)
+    print ('EQUAL :', (equal_count + 0.0) / all_count)
     """
     m = getMorphemes(u'предчувствие')
 

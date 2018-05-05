@@ -10,7 +10,7 @@ from operator import itemgetter
 from collections import defaultdict
 
 import morphemes
-import segmentation_JULIA as segmentation
+import segmentation_RUSLAN as segmentation
 
 from suffixes_prefix_parser import SuffixPrefixParser
 from morphemes import WordMorphemeDicts
@@ -19,7 +19,7 @@ class model(object):
 
     def __init__(self, path_to_model):
 
-        self.model = gensim.models.Word2Vec.load_word2vec_format(path_to_model, binary=True)
+        self.model = gensim.models.KeyedVectors.load_word2vec_format(path_to_model, binary=True)
 
         self.word_from_modelWord = defaultdict(lambda: list())
         self.modelWord_from_word = defaultdict(lambda: list())
@@ -52,6 +52,7 @@ class model(object):
         morpheme_parser = [pref_parser, suff_parser]
         # segment_word function returns the object with morphemes of a word
         word_morphemes = segmentation.getMorphemes(word)
+
         if word_morphemes is not None:
             morphemes_lists = [word_morphemes.prefixes, word_morphemes.suffixes]
             morphemes_vects = list()
@@ -76,58 +77,65 @@ class model(object):
                             if (max_sim > min_sim_value):
                                 morphemes_vects.append((self.model[self.modelWord_from_word[max_sim_mean]], max_sim))                
         
-        result_new_vect = list()
-        
-        if word not in self.modelWord_from_word:
-            if word not in self.roots_avg_vects:
-                return None
+            result_new_vect = list()
+
+            if word not in self.modelWord_from_word:
+                if word not in self.roots_avg_vects:
+                    return None
+                else:
+                    result_new_vect = self.roots_avg_vects[word]
             else:
-                result_new_vect = self.roots_avg_vects[word]
+                # model_word is a word from w2v model (it contains part of speech for this word in format wordname_POSNAME)
+                model_word = self.modelWord_from_word[word]
+                # old_vector - w2v vector of word
+                old_vec = self.model[model_word]
+                result_new_vect = old_vec
+
+            sims = list()
+            for _, sim in morphemes_vects:
+                sims.append(sim)
+
+            sum_of_sims = sum(sims)
+            if ((len(morphemes_vects) > 0) and (sum_of_sims != 0)):
+                for vect, sim in morphemes_vects:
+                    morpheme_vect = [item * (sim / sum_of_sims) for item in vect]
+                    result_new_vect = np.add(result_new_vect,  morpheme_vect)
+                result_new_vect = 0.5 * result_new_vect
+
+            return result_new_vect
         else:
             # model_word is a word from w2v model (it contains part of speech for this word in format wordname_POSNAME)
-            model_word = self.modelWord_from_word[word]        
+            model_word = self.modelWord_from_word[word]
             # old_vector - w2v vector of word
             old_vec = self.model[model_word]
             result_new_vect = old_vec
-         
-        sims = list()
-        for _, sim in morphemes_vects:
-            sims.append(sim)
-        
-        sum_of_sims = sum(sims)    
-        if ((len(morphemes_vects) > 0) and (sum_of_sims != 0)):
-            for vect, sim in morphemes_vects:
-                morpheme_vect = [item * (sim / sum_of_sims) for item in vect]
-                result_new_vect = np.add(result_new_vect,  morpheme_vect)
-            result_new_vect = 0.5 * result_new_vect
-            
-        return result_new_vect
+            return result_new_vect
            
-    def get_new_morphemes_model(self):
+    def get_new_morphemes_model(self, pref_file_name, suff_file_name, min_sim_value):
         new_model = {}
+        print("{} words in corpus".format(len(self.model.vocab)))
         for word_inx in range(len(self.model.vocab)):
             # model_word is a word from w2v model (it contains part of speech for this word in format wordname_POSNAME)
             model_word = self.model.index2word[word_inx]
 
             # word - word from model after remove it's part of speech
             word = self.word_from_modelWord[model_word]
-             
+            print("Word " + word + ", {}".format(word_inx))
             #recalculate vector of the word
-            new_model[model_word] = recalculate_vect(word, 0.1)
+            new_model[model_word] = self.recalculate_vect(word, pref_file_name, suff_file_name, min_sim_value)
 
         return new_model
 
 def load_model(file_name):
     # TODO: it's for current implementation
-    print "Loading word2vec model..."
+    print("Loading word2vec model...")
     dir_name = os.path.dirname(os.path.realpath(__file__))
-    name = os.path.join(*[dir_name, '..', '..', file_name])
+    name = os.path.join(*[dir_name, '..', file_name])
     the_model = model(name)
-    print "Done."
+    print("Done.")
     return the_model
 
-
-#if __name__ == "__main__":
+if __name__ == "__main__":
     # ------------ web --------------------
     #web_model_size = 353608
     #web_model_file_name = 'web.model.bin'
@@ -143,14 +151,17 @@ def load_model(file_name):
     # ---------- ruwikiruscorpora -------------
     #ruwiki_model_size = 392339
     #ruwiki_model_file_name = 'ruwikiruscorpora.model.bin'
-    
-    #dir_name = os.path.dirname(os.path.realpath(__file__))
 
-    #pref_file_name = os.path.join(*[dir_name, '..', 'dicts', 'prefixes.txt'])
-    #suff_file_name = os.path.join(*[dir_name, '..', 'dicts', 'suffixes.txt']) 
+    news_model_file_name = 'news_0_300_2.bin'
 
-    #ruwiki_model = load_model(ruwiki_model_file_name)
-    #print ruwiki_model.model.similar_by_vector(ruwiki_model.model[ruwiki_model.modelWord_from_word[u'машина']], topn=1, restrict_vocab=None)
-    #my_new_model = ruwiki_model.get_new_morphemes_model()
-    
-    #print ruwiki_model.recalculate_vect(u"поросятина", pref_file_name, suff_file_name, 0.1)
+    dir_name = os.path.dirname(os.path.realpath(__file__))
+
+    pref_file_name = os.path.join(*[dir_name, '..', 'dicts', 'prefixes.txt'])
+    suff_file_name = os.path.join(*[dir_name, '..', 'dicts', 'suffixes.txt'])
+
+    news_model = load_model(news_model_file_name)
+    print(news_model.model.similar_by_vector(news_model.model[news_model.modelWord_from_word[u'машина']], topn=2,
+                                             restrict_vocab=None))
+    my_new_model = news_model.get_new_morphemes_model(pref_file_name, suff_file_name, 0.000001)
+
+    print(news_model.recalculate_vect(u"виноделка", pref_file_name, suff_file_name, 0.000001))

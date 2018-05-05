@@ -124,7 +124,7 @@ def parse_word(word, start_from):
         # if
 
         # apply statistic to determine max probability
-        max_prob, max_key = 0.000001, None
+        max_prob, max_key = 0.000001, 'R'
 
         for key, value in D[sub_key].iteritems():
             if key == 'ALL':
@@ -228,23 +228,39 @@ def getMorphemes(word):
     """
     try:
         if WordMorphemeDicts.contains(word):
+            return WordMorphemeDicts.get(word)
+        else:
+            return segment_to_morphemes(word)
+    except Exception:
+        print("Error to get morphemes from word '" + word + " '")
+# def
+
+def getSplits(word):
+    """
+    Check whether word in dictionary and if not then try to segment it
+    """
+    try:
+        if WordMorphemeDicts.contains(word):
             result = []
             for tag, sub in WordMorphemeDicts.get(word).all_in_order:
                 result.append(sub)
             # for
-            
+
             return result
         else:
             p, k, s = parse(word)
 
             return reversed(s)
     except Exception:
-        print "Error to get morphemes from word '" + word + " '"
+        "Error to get morphemes from word '" + word + " '"
+
+
 # def
 
-#if __name__ == '__main__':
-#for sub in getMorphemes(u'железным'):
-#    print sub
+if __name__ == '__main__':
+    #for sub in getSplits(u'сайт'):
+    #    print sub
+    segment_to_morphemes(u'сайт')
 #print k
 #print s
 #raise
@@ -265,7 +281,7 @@ def getMorphemes(word):
 
 #_, _, sub = parse(u'находиться')
 #print ''.join(morphemes.roots)
-
+#print sub[1]
 #-----------------------SLOVOROD--------------------------------#
 # --------------------------------------------------------------#
 # This code to compare dict form slovorod and our original dict #

@@ -85,6 +85,7 @@ class WordMorphemeDicts:
                                 
                                 if TAG != 'M' and len(m):
                                     word_morphems.all_in_order.append((TAG, m))
+
                                 # if
                             # for
 
@@ -108,7 +109,7 @@ class WordMorphemeDicts:
                     word_morphems.tag_for_letter = [''] * len(word)
                     letter_inx = 0
                     for tag, sub in word_morphems.all_in_order: 
-                        for _ in range(len(sub)):
+                        for _ in range(len(sub) - 1):
                             word_morphems.tag_for_letter[letter_inx] = tag
                             letter_inx += 1
                             # for

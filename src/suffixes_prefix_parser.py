@@ -72,7 +72,7 @@ class SuffixPrefixParser(object):
                     else:
                         close_pos = value.find(']')
                         if close_pos == -1 or close_pos < pos:
-                            print value
+                            print(value)
                             raise Exception("Line [%s] is wrong, because examples are formed wrong" % line_num)
                         # if
 
@@ -171,5 +171,5 @@ if __name__ == '__main__':
     meanings, _, _ = parser.get(u'ят')
     meanings2, _, _ = parser2.get(u'пре')
 
-    print len(meanings), meanings[0]
-    print len(meanings2), meanings2[0]
+    print(len(meanings), meanings[0])
+    print(len(meanings2), meanings2[0])
